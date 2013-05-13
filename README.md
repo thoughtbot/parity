@@ -10,19 +10,25 @@ Install
 
 This installs three shell commands:
 
+    development
     staging
     production
-    restore-backup
 
 Usage
 -----
 
-Interact with the staging environment on Heroku:
+Interact with the development environment:
+
+    development restore production
+    development restore staging
+
+Interact with the staging environment:
 
     staging backup
     staging console
     staging log2viz
     staging migrate
+    staging restore production
     staging tail
 
 The script also acts as a pass-through, so you can do anything with it that
@@ -31,7 +37,7 @@ you can do with `heroku ______ --remote staging`:
     staging open
     watch staging ps
 
-Interact with the production environment on Heroku:
+Interact with the production environment:
 
     production backup
     production console
@@ -42,11 +48,8 @@ Interact with the production environment on Heroku:
 The script also acts as a pass-through, so you can do anything with it that
 you can do with `heroku ______ --remote production`:
 
-Restore database backup from one environment into another:
-
-    restore-backup --from production --to staging
-    restore-backup --from production --to development
-    restore-backup --from staging --to development
+    production open
+    watch production ps
 
 Credits
 -------

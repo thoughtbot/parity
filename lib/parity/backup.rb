@@ -2,9 +2,9 @@ require 'yaml'
 
 module Parity
   class Backup
-    def initialize(options)
-      @from = options[:from]
-      @to = options[:to]
+    def initialize(from, to)
+      @from = from
+      @to = to
     end
 
     def restore

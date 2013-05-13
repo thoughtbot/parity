@@ -1,0 +1,5 @@
+#!/usr/bin/ruby
+
+require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+
+Parity::Development.new(ARGV).run

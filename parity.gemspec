@@ -9,12 +9,12 @@ Gem::Specification.new do |spec|
   eos
 
   spec.email = ['dan@thoughtbot.com']
-  spec.executables = ['production', 'restore-backup', 'staging']
+  spec.executables = ['development', 'staging', 'production']
   spec.files = `git ls-files -- lib/*`.split("\n")
   spec.homepage = 'https://github.com/croaky/parity'
   spec.license = 'MIT'
   spec.name = 'parity'
   spec.require_paths = ['lib']
   spec.summary = 'Shell commands for development, staging, and production parity.'
-  spec.version = '0.0.1'
+  spec.version = '0.1.0'
 end
