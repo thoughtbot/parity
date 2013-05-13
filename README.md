@@ -1,7 +1,8 @@
 Parity
 ======
 
-Shell commands for development, staging, and production parity.
+Shell commands for development, staging, and production parity. Currently works
+with Heroku only.
 
 Install
 -------
