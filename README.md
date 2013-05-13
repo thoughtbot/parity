@@ -17,42 +17,50 @@ This installs three shell commands:
 Usage
 -----
 
-Interact with the development environment:
+Backup a database:
+
+    production backup
+    staging backup
+
+Restore a production or staging database backup into development:
 
     development restore production
     development restore staging
 
-Interact with the staging environment:
+Restore a production database backup into staging:
 
-    staging backup
-    staging console
-    staging log2viz
-    staging migrate
     staging restore production
+
+Open a console:
+
+    production console
+    staging console
+
+Open [log2viz][1]:
+
+    production log2viz
+    staging log2viz
+
+Migrate a database and restart the dynos:
+
+    production migrate
+    staging migrate
+
+Tail a log:
+
+    production tail
     staging tail
 
-The script also acts as a pass-through, so you can do anything with it that
-you can do with `heroku ______ --remote staging`:
+The scripts also pass through, so you can do anything with them that you can do
+with `heroku ______ --remote staging` or `heroku ______ --remote production`:
 
-    staging open
-    watch staging ps
-
-Interact with the production environment:
-
-    production backup
-    production console
-    production log2viz
-    production migrate
-    production tail
-
-The script also acts as a pass-through, so you can do anything with it that
-you can do with `heroku ______ --remote production`:
-
-    production open
     watch production ps
+    staging open
 
 Credits
 -------
 
 Parity is maintained by Dan Croak. It is free software and may be redistributed
 under the terms specified in the LICENSE file.
+
+[1]: https://blog.heroku.com/archives/2013/3/19/log2viz
