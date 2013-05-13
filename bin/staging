@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+
+Parity::Staging.new(ARGV).run
