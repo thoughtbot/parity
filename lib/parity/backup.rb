@@ -2,7 +2,7 @@ require 'yaml'
 
 module Parity
   class Backup
-    def initialize(from, to)
+    def initialize(from: from, to: to)
       @from = from
       @to = to
     end
@@ -20,16 +20,23 @@ module Parity
     attr_reader :from, :to
 
     def restore_to_development
-      system %{
-        curl -s `#{db_backup_url}` | \
-        pg_restore --verbose --clean --no-acl --no-owner -d #{development_db}
-      }
+      Kernel.system "#{curl} | #{pg_restore}"
+    end
+
+    def curl
+      "curl -s `#{db_backup_url}`"
+    end
+
+    def pg_restore
+      "pg_restore --verbose --clean --no-acl --no-owner -d #{development_db}"
     end
 
     def restore_to_pass_through
-      system %{
-        heroku pgbackups:restore DATABASE `#{db_backup_url}` --remote #{to}
-      }
+      Kernel.system "heroku pgbackups:restore #{backup_from} --remote #{to}"
+    end
+
+    def backup_from
+      "DATABASE `#{db_backup_url}`"
     end
 
     def db_backup_url
@@ -37,7 +44,8 @@ module Parity
     end
 
     def development_db
-      YAML.load(IO.read('config/database.yml'))['development']['database']
+      yaml_file = IO.read(Parity.config.database_config_path)
+      YAML.load(yaml_file)['development']['database']
     end
   end
 end

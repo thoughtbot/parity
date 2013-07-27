@@ -4,14 +4,13 @@ require 'parity/environment'
 module Parity
   class Staging < Environment
     def initialize(subcommands)
-      @environment = 'staging'
-      super(subcommands)
+      super 'staging', subcommands
     end
 
     private
 
     def restore
-      Backup.new(arguments.last, 'staging').restore
+      Backup.new(from: arguments.last, to: 'staging').restore
     end
   end
 end
