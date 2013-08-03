@@ -5,7 +5,7 @@ describe Parity::Staging do
     backup = double('backup', restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Staging.new(['restore', 'production']) .run
+    Parity::Staging.new(['restore', 'production']).run
 
     expect(Parity::Backup).to have_received(:new).
       with(from: 'production', to: 'staging')

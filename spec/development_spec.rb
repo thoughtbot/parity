@@ -5,7 +5,7 @@ describe Parity::Development do
     backup = double('backup', restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Development.new(['restore', 'production']) .run
+    Parity::Development.new(['restore', 'production']).run
 
     expect(Parity::Backup).to have_received(:new).
       with(from: 'production', to: 'development')
@@ -16,7 +16,7 @@ describe Parity::Development do
     backup = double('backup', restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Development.new(['restore', 'staging']) .run
+    Parity::Development.new(['restore', 'staging']).run
 
     expect(Parity::Backup).to have_received(:new).
       with(from: 'staging', to: 'development')

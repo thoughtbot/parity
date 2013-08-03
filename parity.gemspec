@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.email = ['dan@thoughtbot.com']
   spec.executables = ['development', 'staging', 'production']
-  spec.files = `git ls-files -- lib/*`.split("\n")
+  spec.files = `git ls-files -- lib/* README.md`.split("\n")
   spec.homepage = 'https://github.com/croaky/parity'
   spec.license = 'MIT'
   spec.name = 'parity'

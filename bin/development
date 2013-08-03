@@ -2,4 +2,8 @@
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
 
-Parity::Development.new(ARGV).run
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  Parity::Development.new(ARGV).run
+end
