@@ -2,9 +2,8 @@ require 'yaml'
 
 module Parity
   class Backup
-    def initialize(from: from, to: to)
-      @from = from
-      @to = to
+    def initialize(args)
+      @from, @to = args.values_at(:from, :to)
     end
 
     def restore
