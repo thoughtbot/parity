@@ -10,13 +10,21 @@ module Parity
       if self.class.private_method_defined?(subcommand)
         send(subcommand)
       else
-        Kernel.system "heroku #{pass_through} --remote #{environment}"
+        run_via_cli
       end
     end
 
     private
 
     attr_accessor :environment, :subcommand, :arguments
+
+    def open
+      run_via_cli
+    end
+
+    def run_via_cli
+      Kernel.system "heroku #{pass_through} --remote #{environment}"
+    end
 
     def backup
       Kernel.system "heroku pgbackups:capture --expire --remote #{environment}"
@@ -50,7 +58,7 @@ module Parity
     end
 
     def pass_through
-      [subcommand, arguments].join(' ')
+      [subcommand, arguments].join(' ').strip
     end
   end
 end
