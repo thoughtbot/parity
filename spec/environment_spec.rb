@@ -41,6 +41,14 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(tail)
   end
 
+  it 'opens the app' do
+    Kernel.stub(:system)
+
+    Parity::Environment.new('production', ['open']).run
+
+    expect(Kernel).to have_received(:system).with(open)
+  end
+
   def heroku_backup
     "heroku pgbackups:capture --expire --remote production"
   end
@@ -62,5 +70,9 @@ describe Parity::Environment do
 
   def tail
     "heroku logs --tail --remote production"
+  end
+
+  def open
+    "heroku open --remote production"
   end
 end
