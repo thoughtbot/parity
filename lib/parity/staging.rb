@@ -10,7 +10,7 @@ module Parity
     private
 
     def restore
-      Backup.new(from: arguments.last, to: 'staging').restore
+      Backup.new(from: arguments.first, to: 'staging').restore
     end
   end
 end
