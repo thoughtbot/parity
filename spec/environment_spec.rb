@@ -54,7 +54,7 @@ describe Parity::Environment do
   end
 
   def heroku_console
-    "heroku run console --remote production"
+    "heroku run rails console --remote production"
   end
 
   def heroku_log2viz

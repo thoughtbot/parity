@@ -31,7 +31,7 @@ module Parity
     end
 
     def console
-      Kernel.system "heroku run console --remote #{environment}"
+      Kernel.system "heroku run rails console --remote #{environment}"
     end
 
     def log2viz
