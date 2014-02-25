@@ -50,7 +50,7 @@ module Parity
     end
 
     def heroku_app_name
-      [basename, environment].join('-')
+      Parity.config.heroku_app_name[environment] || [basename, environment].join('-')
     end
 
     def basename
