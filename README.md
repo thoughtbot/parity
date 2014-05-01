@@ -93,6 +93,11 @@ Parity.configure do |config|
 end
 ```
 
+Contributing
+------------
+
+Please see CONTRIBUTING.md for details.
+
 Credits
 -------
 
