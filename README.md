@@ -14,6 +14,23 @@ This installs three shell commands:
     staging
     production
 
+If you have Heroku environments beyond staging and production, you can add a
+binstub to the `bin` folder of your application. Custom environments share
+behavior with staging (can be backed up, can restore from production).
+
+```ruby
+#!/usr/bin/env ruby
+# binstub for 'beta' environment, hosted at myapp-beta.herokuapp.com
+
+require 'parity'
+
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  Parity::HerokuEnvironment.new('beta', ARGV).run
+end
+```
+
 Your development machine will also need these command-line programs:
 
     curl
