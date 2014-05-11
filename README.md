@@ -3,6 +3,21 @@ Parity
 
 Shell commands for development, staging, and production parity for Heroku apps.
 
+Prerequisites
+-------------
+
+Your development machine will need these command-line programs:
+
+    curl
+    heroku
+    pg_restore
+
+On a Mac, `curl` is installed by default and the other programs can be installed
+with Homebrew:
+
+    brew install heroku-toolbelt
+    brew install postgres --no-python
+
 Install
 -------
 
@@ -14,17 +29,30 @@ This installs three shell commands:
     staging
     production
 
-Your development machine will also need these command-line programs:
+Customization
+-------------
 
-    curl
-    heroku
-    pg_restore
+If you have Heroku environments beyond staging and production (such as a feature
+environment for each developer), you can add a [binstub] to the `bin` folder of
+your application. Custom environments share behavior with staging: they can be
+backed up and can restore from production.
 
-On a Mac, `curl` is installed by default and the other programs can be installed
-with Homebrew:
+[binstub]: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
 
-    brew install heroku-toolbelt
-    brew install postgres --no-python
+Here's an example binstub for a 'feature-geoff' environment, hosted at
+myapp-feature-geoff.herokuapp.com.
+
+```ruby
+#!/usr/bin/env ruby
+
+require 'parity'
+
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  Parity::HerokuEnvironment.new('feature-geoff', ARGV).run
+end
+```
 
 Usage
 -----

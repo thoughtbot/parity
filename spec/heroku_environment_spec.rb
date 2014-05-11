@@ -1,11 +1,11 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
 
-describe Parity::Staging do
+describe Parity::HerokuEnvironment do
   it 'restores backups from production' do
     backup = double('backup', restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Staging.new(['restore', 'production']).run
+    Parity::HerokuEnvironment.new('staging', ['restore', 'production']).run
 
     expect(Parity::Backup).to have_received(:new).
       with(from: 'production', to: 'staging')
