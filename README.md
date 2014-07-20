@@ -29,31 +29,6 @@ This installs three shell commands:
     staging
     production
 
-Customization
--------------
-
-If you have Heroku environments beyond staging and production (such as a feature
-environment for each developer), you can add a [binstub] to the `bin` folder of
-your application. Custom environments share behavior with staging: they can be
-backed up and can restore from production.
-
-[binstub]: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
-
-Here's an example binstub for a 'feature-geoff' environment, hosted at
-myapp-feature-geoff.herokuapp.com.
-
-```ruby
-#!/usr/bin/env ruby
-
-require 'parity'
-
-if ARGV.empty?
-  puts Parity::Usage.new
-else
-  Parity::HerokuEnvironment.new('feature-geoff', ARGV).run
-end
-```
-
 Usage
 -----
 
@@ -109,7 +84,7 @@ Parity expects:
 * The Heroku apps are named like `app-staging` and `app-production`
   where `app` is equal to `basename $PWD`.
 
-Configuration
+Customization
 -------------
 
 Override some of the conventions:
@@ -118,6 +93,28 @@ Override some of the conventions:
 Parity.configure do |config|
   config.database_config_path = 'different/path.yml'
   config.heroku_app_basename = 'different-base-name'
+end
+```
+
+If you have Heroku environments beyond staging and production (such as a feature
+environment for each developer), you can add a [binstub] to the `bin` folder of
+your application. Custom environments share behavior with staging: they can be
+backed up and can restore from production.
+
+[binstub]: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
+
+Here's an example binstub for a 'feature-geoff' environment, hosted at
+myapp-feature-geoff.herokuapp.com.
+
+```ruby
+#!/usr/bin/env ruby
+
+require 'parity'
+
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  Parity::Environment.new('feature-geoff', ARGV).run
 end
 ```
 
