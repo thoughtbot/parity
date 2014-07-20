@@ -5,5 +5,5 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
 if ARGV.empty?
   puts Parity::Usage.new
 else
-  Parity::HerokuEnvironment.new('staging', ARGV).run
+  Parity::Environment.new('staging', ARGV).run
 end

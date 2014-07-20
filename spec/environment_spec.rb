@@ -9,6 +9,51 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_backup)
   end
 
+  it 'restores backups from production to staging' do
+    backup = double('backup', restore: nil)
+    Parity::Backup.stub(new: backup)
+
+    Parity::Environment.new('staging', ['restore', 'production']).run
+
+    expect(Parity::Backup).to have_received(:new).
+      with(from: 'production', to: 'staging')
+    expect(backup).to have_received(:restore)
+  end
+
+  it 'restores backups from production to development' do
+    backup = double('backup', restore: nil)
+    Parity::Backup.stub(new: backup)
+
+    Parity::Environment.new('development', ['restore', 'production']).run
+
+    expect(Parity::Backup).to have_received(:new).
+      with(from: 'production', to: 'development')
+    expect(backup).to have_received(:restore)
+  end
+
+  it 'restores backups from staging to development' do
+    backup = double('backup', restore: nil)
+    Parity::Backup.stub(new: backup)
+
+    Parity::Environment.new('development', ['restore', 'staging']).run
+
+    expect(Parity::Backup).to have_received(:new).
+      with(from: 'staging', to: 'development')
+    expect(backup).to have_received(:restore)
+  end
+
+  it 'does not allow restoring backups into production' do
+    backup = double('backup', restore: nil)
+    Parity::Backup.stub(new: backup)
+    $stdout.stub(:puts)
+
+    Parity::Environment.new('production', ['restore', 'staging']).run
+
+    expect(Parity::Backup).not_to have_received(:new)
+    expect($stdout).to have_received(:puts).
+      with("Parity does not support restoring backups into your production environment.")
+  end
+
   it 'opens the remote console' do
     Kernel.stub(:system)
 

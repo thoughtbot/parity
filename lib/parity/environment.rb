@@ -1,3 +1,5 @@
+require 'parity/backup'
+
 module Parity
   class Environment
     def initialize(environment, subcommands)
@@ -28,6 +30,14 @@ module Parity
 
     def backup
       Kernel.system "heroku pgbackups:capture --expire --remote #{environment}"
+    end
+
+    def restore
+      if environment == "production"
+        $stdout.puts "Parity does not support restoring backups into your production environment."
+      else
+        Backup.new(from: arguments.first, to: environment).restore
+      end
     end
 
     def console
