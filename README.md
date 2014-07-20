@@ -71,6 +71,11 @@ Restore a production database backup into staging:
 
     staging restore production
 
+Run rake easily:
+
+    staging rake purge
+    production rake purge
+
 Open a console:
 
     production console

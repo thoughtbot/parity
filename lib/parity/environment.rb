@@ -22,6 +22,10 @@ module Parity
       run_via_cli
     end
 
+    def rake
+      Kernel.system "heroku run rake #{arguments.join(' ')} --remote #{environment}"
+    end
+
     def run_via_cli
       Kernel.system "heroku #{pass_through} --remote #{environment}"
     end

@@ -49,6 +49,14 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(open)
   end
 
+  it 'runs rake' do
+    Kernel.stub(:system)
+
+    Parity::Environment.new('production', ['rake', 'purge']).run
+
+    expect(Kernel).to have_received(:system).with(rake_purge)
+  end
+
   def heroku_backup
     "heroku pgbackups:capture --expire --remote production"
   end
@@ -66,6 +74,10 @@ describe Parity::Environment do
         heroku run rake db:migrate --remote production &&
         heroku restart --remote production
       }
+  end
+
+  def rake_purge
+    "heroku run rake purge --remote production"
   end
 
   def tail
