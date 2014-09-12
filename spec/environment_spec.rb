@@ -1,95 +1,95 @@
-require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+require File.join(File.dirname(__FILE__), "..", "lib", "parity")
 
 describe Parity::Environment do
-  it 'backs up the database' do
+  it "backs up the database" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['backup']).run
+    Parity::Environment.new("production", ["backup"]).run
 
     expect(Kernel).to have_received(:system).with(heroku_backup)
   end
 
-  it 'restores backups from production to staging' do
-    backup = double('backup', restore: nil)
+  it "restores backups from production to staging" do
+    backup = double("backup", restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Environment.new('staging', ['restore', 'production']).run
+    Parity::Environment.new("staging", ["restore", "production"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: 'production', to: 'staging')
+      with(from: "production", to: "staging")
     expect(backup).to have_received(:restore)
   end
 
-  it 'restores backups from production to development' do
-    backup = double('backup', restore: nil)
+  it "restores backups from production to development" do
+    backup = double("backup", restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Environment.new('development', ['restore', 'production']).run
+    Parity::Environment.new("development", ["restore", "production"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: 'production', to: 'development')
+      with(from: "production", to: "development")
     expect(backup).to have_received(:restore)
   end
 
-  it 'restores backups from staging to development' do
-    backup = double('backup', restore: nil)
+  it "restores backups from staging to development" do
+    backup = double("backup", restore: nil)
     Parity::Backup.stub(new: backup)
 
-    Parity::Environment.new('development', ['restore', 'staging']).run
+    Parity::Environment.new("development", ["restore", "staging"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: 'staging', to: 'development')
+      with(from: "staging", to: "development")
     expect(backup).to have_received(:restore)
   end
 
-  it 'does not allow restoring backups into production' do
-    backup = double('backup', restore: nil)
+  it "does not allow restoring backups into production" do
+    backup = double("backup", restore: nil)
     Parity::Backup.stub(new: backup)
     $stdout.stub(:puts)
 
-    Parity::Environment.new('production', ['restore', 'staging']).run
+    Parity::Environment.new("production", ["restore", "staging"]).run
 
     expect(Parity::Backup).not_to have_received(:new)
     expect($stdout).to have_received(:puts).
       with("Parity does not support restoring backups into your production environment.")
   end
 
-  it 'opens the remote console' do
+  it "opens the remote console" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['console']).run
+    Parity::Environment.new("production", ["console"]).run
 
     expect(Kernel).to have_received(:system).with(heroku_console)
   end
 
-  it 'opens the log2viz visualization' do
+  it "opens the log2viz visualization" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['log2viz']).run
+    Parity::Environment.new("production", ["log2viz"]).run
 
     expect(Kernel).to have_received(:system).with(heroku_log2viz)
   end
 
-  it 'automatically restarts processes when it migrates the database' do
+  it "automatically restarts processes when it migrates the database" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['migrate']).run
+    Parity::Environment.new("production", ["migrate"]).run
 
     expect(Kernel).to have_received(:system).with(migrate)
   end
 
-  it 'tails logs' do
+  it "tails logs with any additional arguments" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['tail']).run
+    Parity::Environment.new("production", ["tail", "--ps", "web"]).run
 
     expect(Kernel).to have_received(:system).with(tail)
   end
 
-  it 'opens the app' do
+  it "opens the app" do
     Kernel.stub(:system)
 
-    Parity::Environment.new('production', ['open']).run
+    Parity::Environment.new("production", ["open"]).run
 
     expect(Kernel).to have_received(:system).with(open)
   end
@@ -114,7 +114,7 @@ describe Parity::Environment do
   end
 
   def tail
-    "heroku logs --tail --remote production"
+    "heroku logs --tail --ps web --remote production"
   end
 
   def open

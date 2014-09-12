@@ -1,4 +1,4 @@
-require 'parity/backup'
+require "parity/backup"
 
 module Parity
   class Environment
@@ -34,7 +34,8 @@ module Parity
 
     def restore
       if environment == "production"
-        $stdout.puts "Parity does not support restoring backups into your production environment."
+        $stdout.puts "Parity does not support restoring backups into your "\
+          "production environment."
       else
         Backup.new(from: arguments.first, to: environment).restore
       end
@@ -56,7 +57,9 @@ module Parity
     end
 
     def tail
-      Kernel.system "heroku logs --tail --remote #{environment}"
+      Kernel.system(
+        "heroku logs --tail #{arguments.join(" ")} --remote #{environment}"
+      )
     end
 
     def heroku_app_name
