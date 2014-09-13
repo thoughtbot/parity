@@ -66,6 +66,11 @@ Tail a log:
     production tail
     staging tail
 
+Use [redis-cli][2] with your RedisToGo addon:
+
+    production redis_cli
+    staging redis_cli
+
 The scripts also pass through, so you can do anything with them that you can do
 with `heroku ______ --remote staging` or `heroku ______ --remote production`:
 
@@ -130,3 +135,4 @@ Parity is maintained by Dan Croak. It is free software and may be redistributed
 under the terms specified in the LICENSE file.
 
 [1]: https://blog.heroku.com/archives/2013/3/19/log2viz
+[2]: http://redis.io/commands

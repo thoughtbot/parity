@@ -62,6 +62,21 @@ module Parity
       )
     end
 
+    def redis_cli
+      url = URI(raw_redis_url)
+
+      Kernel.system(
+        "redis-cli -h #{url.host} -p #{url.port} -a #{url.password}"
+      )
+    end
+
+    def raw_redis_url
+      @redis_to_go_url ||= Open3.capture3(
+        "heroku config:get #{Parity.config.redis_url_env_variable} "\
+        "--remote #{environment}"
+      )[0].strip
+    end
+
     def heroku_app_name
       [basename, environment].join('-')
     end
