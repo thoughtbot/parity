@@ -9,7 +9,9 @@ module Parity
     end
 
     def run
-      if self.class.private_method_defined?(subcommand)
+      if subcommand == "redis-cli"
+        redis_cli
+      elsif self.class.private_method_defined?(subcommand)
         send(subcommand)
       else
         run_via_cli
@@ -60,6 +62,27 @@ module Parity
       Kernel.system(
         "heroku logs --tail #{arguments.join(" ")} --remote #{environment}"
       )
+    end
+
+    def redis_cli
+      url = URI(raw_redis_url)
+
+      Kernel.system(
+        "redis-cli",
+        "-h",
+        url.host,
+        "-p",
+        url.port,
+        "-a",
+        url.password
+      )
+    end
+
+    def raw_redis_url
+      @redis_to_go_url ||= Open3.capture3(
+        "heroku config:get #{Parity.config.redis_url_env_variable} "\
+        "--remote #{environment}"
+      )[0].strip
     end
 
     def heroku_app_name
