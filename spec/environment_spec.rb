@@ -94,6 +94,30 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(open)
   end
 
+  it "opens a Redis session connected to the environment's Redis service" do
+    Parity.configure do |config|
+      config.redis_url_env_variable = "MYREDIS_URL"
+    end
+    Open3.stub(:capture3).and_return(open3_redis_url_fetch_result)
+    Kernel.stub(:system)
+
+    Parity::Environment.new("production", ["redis_cli"]).run
+
+    expect(Kernel).to have_received(:system).with(
+      "redis-cli",
+      "-h",
+      "landshark.redistogo.com",
+      "-p",
+      90210,
+      "-a",
+      "abcd1234efgh5678"
+    )
+    expect(Open3).
+      to have_received(:capture3).
+      with(fetch_redis_url).
+      once
+  end
+
   def heroku_backup
     "heroku pgbackups:capture --expire --remote production"
   end
@@ -107,7 +131,7 @@ describe Parity::Environment do
   end
 
   def migrate
-     %{
+      %{
         heroku run rake db:migrate --remote production &&
         heroku restart --remote production
       }
@@ -119,5 +143,21 @@ describe Parity::Environment do
 
   def open
     "heroku open --remote production"
+  end
+
+  def redis_cli
+    "redis-cli -h landshark.redistogo.com -p 90210 -a abcd1234efgh5678"
+  end
+
+  def fetch_redis_url
+    "heroku config:get MYREDIS_URL --remote production"
+  end
+
+  def open3_redis_url_fetch_result
+    [
+      "redis://redistogo:abcd1234efgh5678@landshark.redistogo.com:90210/\n",
+      "",
+      ""
+    ]
   end
 end
