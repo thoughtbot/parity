@@ -103,7 +103,15 @@ describe Parity::Environment do
 
     Parity::Environment.new("production", ["redis_cli"]).run
 
-    expect(Kernel).to have_received(:system).with(redis_cli)
+    expect(Kernel).to have_received(:system).with(
+      "redis-cli",
+      "-h",
+      "landshark.redistogo.com",
+      "-p",
+      90210,
+      "-a",
+      "abcd1234efgh5678"
+    )
     expect(Open3).
       to have_received(:capture3).
       with(fetch_redis_url).

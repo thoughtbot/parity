@@ -68,8 +68,8 @@ Tail a log:
 
 Use [redis-cli][2] with your RedisToGo addon:
 
-    production redis_cli
-    staging redis_cli
+    production redis-cli
+    staging redis-cli
 
 The scripts also pass through, so you can do anything with them that you can do
 with `heroku ______ --remote staging` or `heroku ______ --remote production`:
@@ -98,6 +98,7 @@ Override some of the conventions:
 Parity.configure do |config|
   config.database_config_path = 'different/path.yml'
   config.heroku_app_basename = 'different-base-name'
+  config.redis_url_env_variable = 'ENV_VARIABLE_THAT_ISNT_REDIS_URL'
 end
 ```
 

@@ -9,7 +9,9 @@ module Parity
     end
 
     def run
-      if self.class.private_method_defined?(subcommand)
+      if subcommand == "redis-cli"
+        redis_cli
+      elsif self.class.private_method_defined?(subcommand)
         send(subcommand)
       else
         run_via_cli
@@ -66,7 +68,13 @@ module Parity
       url = URI(raw_redis_url)
 
       Kernel.system(
-        "redis-cli -h #{url.host} -p #{url.port} -a #{url.password}"
+        "redis-cli",
+        "-h",
+        url.host,
+        "-p",
+        url.port,
+        "-a",
+        url.password
       )
     end
 

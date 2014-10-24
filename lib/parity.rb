@@ -1,7 +1,7 @@
-require 'parity/configuration'
-require 'parity/environment'
-require 'parity/usage'
-require 'open3'
-require 'uri'
+require "parity/configuration"
+require "parity/environment"
+require "parity/usage"
+require "open3"
+require "uri"
 
 Parity.configure

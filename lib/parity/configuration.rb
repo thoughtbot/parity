@@ -1,12 +1,13 @@
 module Parity
   class Configuration
-    attr_accessor :database_config_path,
+    attr_accessor \
+      :database_config_path,
       :heroku_app_basename,
       :redis_url_env_variable
 
     def initialize
-      @database_config_path = 'config/database.yml'
-      @redis_url_env_variable = 'REDISTOGO_URL'
+      @database_config_path = "config/database.yml"
+      @redis_url_env_variable = "REDIS_URL"
     end
   end
 
