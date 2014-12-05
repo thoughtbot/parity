@@ -2,10 +2,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Dan Croak"]
 
   spec.description = <<-eos
-    Devevelopment/staging/production parity is intended to decrease the time
-    between a developer writing code and having it deployed, make it possible
-    for the same people who wrote the code to deploy it and watch its behavior
-    in production, and reduce the number of tools necessary to manage.
+    Development/staging/production parity makes it easier for
+    those who write the code to deploy the code.
   eos
 
   spec.email = ["dan@thoughtbot.com"]
@@ -16,5 +14,5 @@ Gem::Specification.new do |spec|
   spec.name = "parity"
   spec.require_paths = ["lib"]
   spec.summary = "Shell commands for development, staging, and production parity."
-  spec.version = "0.3.1"
+  spec.version = "0.4.0"
 end

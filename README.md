@@ -67,7 +67,7 @@ Tail a log:
     production tail
     staging tail
 
-Use [redis-cli][2] with your `REDIS_URL` add-on.
+Use [redis-cli][2] with your `REDIS_URL` add-on:
 
     production redis-cli
     staging redis-cli
