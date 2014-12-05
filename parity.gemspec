@@ -14,5 +14,5 @@ Gem::Specification.new do |spec|
   spec.name = "parity"
   spec.require_paths = ["lib"]
   spec.summary = "Shell commands for development, staging, and production parity."
-  spec.version = "0.4.0"
+  spec.version = "0.4.1"
 end
