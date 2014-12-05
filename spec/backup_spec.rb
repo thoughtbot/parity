@@ -6,7 +6,7 @@ describe Parity::Backup do
       config.database_config_path = database_config_path
     end
 
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: 'production', to: 'development').restore
 
@@ -14,7 +14,7 @@ describe Parity::Backup do
   end
 
   it 'restores backups to staging' do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: 'production', to: 'staging').restore
 

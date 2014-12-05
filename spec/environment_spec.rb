@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), "..", "lib", "parity")
 
 describe Parity::Environment do
   it "backs up the database" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["backup"]).run
 
@@ -11,7 +11,7 @@ describe Parity::Environment do
 
   it "restores backups from production to staging" do
     backup = double("backup", restore: nil)
-    Parity::Backup.stub(new: backup)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore", "production"]).run
 
@@ -22,7 +22,7 @@ describe Parity::Environment do
 
   it "restores backups from production to development" do
     backup = double("backup", restore: nil)
-    Parity::Backup.stub(new: backup)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("development", ["restore", "production"]).run
 
@@ -33,7 +33,7 @@ describe Parity::Environment do
 
   it "restores backups from staging to development" do
     backup = double("backup", restore: nil)
-    Parity::Backup.stub(new: backup)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("development", ["restore", "staging"]).run
 
@@ -44,8 +44,8 @@ describe Parity::Environment do
 
   it "does not allow restoring backups into production" do
     backup = double("backup", restore: nil)
-    Parity::Backup.stub(new: backup)
-    $stdout.stub(:puts)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+    allow($stdout).to receive(:puts)
 
     Parity::Environment.new("production", ["restore", "staging"]).run
 
@@ -55,7 +55,7 @@ describe Parity::Environment do
   end
 
   it "opens the remote console" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["console"]).run
 
@@ -63,7 +63,7 @@ describe Parity::Environment do
   end
 
   it "opens the log2viz visualization" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["log2viz"]).run
 
@@ -71,7 +71,7 @@ describe Parity::Environment do
   end
 
   it "automatically restarts processes when it migrates the database" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["migrate"]).run
 
@@ -79,7 +79,7 @@ describe Parity::Environment do
   end
 
   it "tails logs with any additional arguments" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["tail", "--ps", "web"]).run
 
@@ -87,7 +87,7 @@ describe Parity::Environment do
   end
 
   it "opens the app" do
-    Kernel.stub(:system)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["open"]).run
 
@@ -99,8 +99,8 @@ describe Parity::Environment do
       config.redis_url_env_variable = "MYREDIS_URL"
     end
 
-    Open3.stub(:capture3).and_return(open3_redis_url_fetch_result)
-    Kernel.stub(:system)
+    allow(Open3).to receive(:capture3).and_return(open3_redis_url_fetch_result)
+    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["redis_cli"]).run
 
