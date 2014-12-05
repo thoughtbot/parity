@@ -72,7 +72,7 @@ module Parity
         "-h",
         url.host,
         "-p",
-        url.port,
+        url.port.to_s,
         "-a",
         url.password
       )

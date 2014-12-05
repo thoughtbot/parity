@@ -109,7 +109,7 @@ describe Parity::Environment do
       "-h",
       "landshark.redistogo.com",
       "-p",
-      90210,
+      "90210",
       "-a",
       "abcd1234efgh5678"
     )
