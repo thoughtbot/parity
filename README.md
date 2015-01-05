@@ -22,13 +22,30 @@ and the other programs can be installed with Homebrew:
 Install
 -------
 
+OSX:
+
+    brew tap thoughtbot/formulae
+    brew install parity
+
+On other systems you can:
+
+1. Download the package for your system from the [releases
+page][releases]
+2. Extract the tarball and place it so that `/bin` is in your `PATH`
+
+Alternatively, you can do the following on all systems
+(requires a Ruby installation):
+
     gem install parity
 
-This installs three shell commands:
+All these methods install the following three shell commands:
 
     development
     staging
     production
+
+
+[releases]: https://github.com/croaky/parity/releases
 
 Usage
 -----
@@ -129,6 +146,11 @@ Contributing
 ------------
 
 Please see CONTRIBUTING.md for details.
+
+Releasing
+---------
+
+See guidelines in RELEASING.md for details
 
 Credits
 -------

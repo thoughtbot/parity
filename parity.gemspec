@@ -1,3 +1,5 @@
+require File.expand_path("../lib/parity/version", __FILE__)
+
 Gem::Specification.new do |spec|
   spec.authors = ["Dan Croak"]
 
@@ -14,5 +16,5 @@ Gem::Specification.new do |spec|
   spec.name = "parity"
   spec.require_paths = ["lib"]
   spec.summary = "Shell commands for development, staging, and production parity."
-  spec.version = "0.4.1"
+  spec.version = Parity::VERSION
 end

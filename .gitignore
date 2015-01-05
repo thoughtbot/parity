@@ -9,6 +9,8 @@ _yardoc
 coverage
 doc/
 lib/bundler/man
+packaging/traveling-ruby*
+parity-*
 pkg
 rdoc
 spec/reports
