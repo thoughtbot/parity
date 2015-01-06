@@ -55,7 +55,9 @@ end
 def copy_shims(package_dir)
   shim_dir = "#{package_dir}/bin"
   mkdir shim_dir
-  cp "packaging/shim.sh", "#{shim_dir}/development"
+  cp "packaging/development_shim.sh", "#{shim_dir}/development"
+  cp "packaging/staging_shim.sh", "#{shim_dir}/staging"
+  cp "packaging/production_shim.sh", "#{shim_dir}/production"
 end
 
 def extract_ruby(package_dir)
