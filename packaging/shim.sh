@@ -1,6 +1,9 @@
+#!/bin/bash
+
 set -e
 
-RELATIVE_DIR="`dirname \"$0\"`"
-SELF_DIR="`cd \"$RELATIVE_DIR\" && pwd`"
+REALPATH=$(readlink $0 || $0)
+RELATIVE_DIR=$(dirname $REALPATH)
+SELF_DIR=$(cd $(dirname $0) && cd $RELATIVE_DIR && pwd)
 
-exec "$SELF_DIR/ruby/bin/ruby" "$SELF_DIR/bin/development"
+exec "$SELF_DIR/../lib/ruby/bin/ruby" "$SELF_DIR/../lib/app/bin/development"
