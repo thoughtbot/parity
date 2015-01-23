@@ -4,6 +4,7 @@ module Parity
   class Backup
     def initialize(args)
       @from, @to = args.values_at(:from, :to)
+      @additional_args = args[:additional_args] || ""
     end
 
     def restore
@@ -14,9 +15,11 @@ module Parity
       end
     end
 
-    private
+    protected
 
-    attr_reader :from, :to
+    attr_reader :additional_args, :from, :to
+
+    private
 
     def restore_to_development
       Kernel.system "#{curl} | #{pg_restore}"
@@ -31,7 +34,10 @@ module Parity
     end
 
     def restore_to_pass_through
-      Kernel.system "heroku pgbackups:restore #{backup_from} --remote #{to}"
+      Kernel.system(
+        "heroku pgbackups:restore #{backup_from} --remote #{to} "\
+          "#{additional_args}"
+      )
     end
 
     def backup_from
