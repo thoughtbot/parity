@@ -39,7 +39,11 @@ module Parity
         $stdout.puts "Parity does not support restoring backups into your "\
           "production environment."
       else
-        Backup.new(from: arguments.first, to: environment).restore
+        Backup.new(
+          from: arguments.first,
+          to: environment,
+          additional_args: arguments.drop(1).join(" ")
+        ).restore
       end
     end
 
