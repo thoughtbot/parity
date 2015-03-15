@@ -120,7 +120,7 @@ describe Parity::Environment do
   end
 
   def heroku_backup
-    "heroku pgbackups:capture --expire --remote production"
+    "heroku pg:backups capture --expire --remote production"
   end
 
   def heroku_console
