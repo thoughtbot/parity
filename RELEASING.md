@@ -27,7 +27,7 @@ The packages generated are tarballs of the following directory structure:
 Releasing a new version
 ----------------------
 
-1. Update the version in `parity/version.rb`
+1. Update the version in `lib/parity/version.rb`
 2. Create a new tag based on the version number
 3. Generate packages
 4. Create a [release] for the latest tag and attach the packages
