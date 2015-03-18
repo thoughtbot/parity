@@ -29,9 +29,8 @@ OSX:
 
 On other systems you can:
 
-1. Download the package for your system from the [releases
-page][releases]
-2. Extract the tarball and place it so that `/bin` is in your `PATH`
+1. Download the package for your system from the [releases page][releases]
+1. Extract the tarball and place it so that `/bin` is in your `PATH`
 
 Alternatively, you can do the following on all systems
 (requires a Ruby installation):
@@ -43,7 +42,6 @@ All these methods install the following three shell commands:
     development
     staging
     production
-
 
 [releases]: https://github.com/croaky/parity/releases
 
