@@ -148,6 +148,28 @@ describe Parity::Environment do
       once
   end
 
+  it "deploys the application and runs migrations when required" do
+    allow(Kernel).to receive(:system)
+    allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
+
+    Parity::Environment.new("production", ["deploy"]).run
+
+    expect(Kernel).to have_received(:system).with(git_push)
+    expect(Kernel).to have_received(:system).with(skip_migration)
+    expect(Kernel).to have_received(:system).with(migrate)
+  end
+
+  it "deploys the application and skips migrations when not required" do
+    allow(Kernel).to receive(:system)
+    allow(Kernel).to receive(:system).with(skip_migration).and_return(true)
+
+    Parity::Environment.new("production", ["deploy"]).run
+
+    expect(Kernel).to have_received(:system).with(git_push)
+    expect(Kernel).to have_received(:system).with(skip_migration)
+    expect(Kernel).not_to have_received(:system).with(migrate)
+  end
+
   def heroku_backup
     "heroku pgbackups:capture --expire --remote production"
   end
@@ -158,6 +180,17 @@ describe Parity::Environment do
 
   def heroku_log2viz
     "open https://log2viz.herokuapp.com/app/parity-production"
+  end
+
+  def git_push
+    "git push production master"
+  end
+
+  def skip_migration
+      %{
+        git fetch production &&
+        git diff --quiet production/master..master -- db/migrate
+      }
   end
 
   def migrate

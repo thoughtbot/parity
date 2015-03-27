@@ -34,6 +34,16 @@ module Parity
       Kernel.system "heroku pgbackups:capture --expire --remote #{environment}"
     end
 
+    def deploy
+      skip_migration = skip_migration?
+
+      Kernel.system "git push #{environment} master"
+
+      unless skip_migration
+        migrate
+      end
+    end
+
     def restore
       if environment == "production"
         $stdout.puts "Parity does not support restoring backups into your "\
@@ -95,6 +105,13 @@ module Parity
 
     def basename
       Parity.config.heroku_app_basename || Dir.pwd.split('/').last
+    end
+
+    def skip_migration?
+      Kernel.system %{
+        git fetch #{environment} &&
+        git diff --quiet #{environment}/master..master -- db/migrate
+      }
     end
   end
 end

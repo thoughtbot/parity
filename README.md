@@ -8,12 +8,13 @@ Prerequisites
 
 Your development machine will need these command-line programs:
 
+    git
     curl
     heroku
     pg_restore
 
 On a Mac,
-`curl` is installed by default
+`curl` and `git` are installed by default
 and the other programs can be installed with Homebrew:
 
     brew install heroku-toolbelt
@@ -61,6 +62,11 @@ Restore a production or staging database backup into development:
 Restore a production database backup into staging:
 
     staging restore production
+
+Deploy from master, and migrate and restart the dynos if necessary:
+
+    production deploy
+    staging deploy
 
 Open a console:
 
