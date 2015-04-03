@@ -1,6 +1,17 @@
 require File.join(File.dirname(__FILE__), "..", "lib", "parity")
 
 describe Parity::Environment do
+  it "passes through arguments with correct quoting" do
+    allow(Kernel).to receive(:system)
+
+    Parity::Environment.new(
+      "production",
+      ["pg:psql", "-c", "select count(*) from users;"]
+    ).run
+
+    expect(Kernel).to have_received(:system).with(*psql_count)
+  end
+
   it "backs up the database" do
     allow(Kernel).to receive(:system)
 
@@ -109,7 +120,7 @@ describe Parity::Environment do
 
     Parity::Environment.new("production", ["open"]).run
 
-    expect(Kernel).to have_received(:system).with(open)
+    expect(Kernel).to have_received(:system).with(*open)
   end
 
   it "opens a Redis session connected to the environment's Redis service" do
@@ -161,7 +172,7 @@ describe Parity::Environment do
   end
 
   def open
-    "heroku open --remote production"
+    ["heroku", "open", "--remote", "production"]
   end
 
   def redis_cli
@@ -177,6 +188,14 @@ describe Parity::Environment do
       "redis://redistogo:abcd1234efgh5678@landshark.redistogo.com:90210/\n",
       "",
       ""
+    ]
+  end
+
+  def psql_count
+    [
+      "heroku", "pg:psql",
+      "-c", "select count(*) from users;",
+      "--remote", "production"
     ]
   end
 end

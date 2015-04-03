@@ -27,7 +27,7 @@ module Parity
     end
 
     def run_via_cli
-      Kernel.system "heroku #{pass_through} --remote #{environment}"
+      Kernel.system "heroku", subcommand, *arguments, "--remote", environment
     end
 
     def backup
@@ -95,10 +95,6 @@ module Parity
 
     def basename
       Parity.config.heroku_app_basename || Dir.pwd.split('/').last
-    end
-
-    def pass_through
-      [subcommand, arguments].join(' ').strip
     end
   end
 end
