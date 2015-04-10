@@ -35,4 +35,4 @@ Releasing a new version
 1. Update the [homebrew formula] to point to the latest OSX package
 
 [homebrew formula]: https://github.com/thoughtbot/homebrew-formulae/blob/master/Formula/parity.rb
-[release]: https://github.com/croaky/parity/releases
+[release]: https://github.com/thoughtbot/parity/releases

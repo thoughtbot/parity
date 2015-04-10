@@ -2,7 +2,7 @@
 
 Fork the repo:
 
-    git clone git@github.com:croaky/parity.git
+    git clone git@github.com:thoughtbot/parity.git
 
 Set up your machine:
 
@@ -18,7 +18,7 @@ Make your change. Add tests for your change. Make the tests pass:
 
 Push to your fork and [submit a pull request][pr].
 
-[pr]: https://github.com/croaky/parity/compare/
+[pr]: https://github.com/thoughtbot/parity/compare/
 
 Wait for feedback. Increase the chance that your pull request is accepted:
 

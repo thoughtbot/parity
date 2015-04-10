@@ -44,7 +44,7 @@ All these methods install the following three shell commands:
     staging
     production
 
-[releases]: https://github.com/croaky/parity/releases
+[releases]: https://github.com/thoughtbot/parity/releases
 
 Usage
 -----
@@ -98,6 +98,9 @@ with `heroku ______ --remote staging` or `heroku ______ --remote production`:
 
     watch production ps
     staging open
+
+[1]: https://blog.heroku.com/archives/2013/3/19/log2viz
+[2]: http://redis.io/commands
 
 Convention
 ----------
@@ -156,11 +159,26 @@ Releasing
 
 See guidelines in RELEASING.md for details
 
-Credits
+License
 -------
 
-Parity is maintained by Dan Croak. It is free software and may be redistributed
-under the terms specified in the LICENSE file.
+Parity is © 2013-2015 thoughtbot, inc.
+It is free software,
+and may be redistributed under the terms specified in the [LICENSE] file.
 
-[1]: https://blog.heroku.com/archives/2013/3/19/log2viz
-[2]: http://redis.io/commands
+[LICENSE]: LICENSE
+
+About thoughtbot
+----------------
+
+![thoughtbot](https://thoughtbot.com/logo.png)
+
+Parity is maintained and funded by thoughtbot, inc.
+The names and logos for thoughtbot are trademarks of thoughtbot, inc.
+
+We are passionate about open source software.
+See [our other projects][community].
+We are [available for hire][hire].
+
+[community]: https://thoughtbot.com/community?utm_source=github
+[hire]: https://thoughtbot.com?utm_source=github
