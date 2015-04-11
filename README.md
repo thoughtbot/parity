@@ -3,27 +3,10 @@ Parity
 
 Shell commands for development, staging, and production parity for Heroku apps.
 
-Prerequisites
--------------
-
-Your development machine will need these command-line programs:
-
-    git
-    curl
-    heroku
-    pg_restore
-
-On a Mac,
-`curl` and `git` are installed by default
-and the other programs can be installed with Homebrew:
-
-    brew install heroku-toolbelt
-    brew install postgres
-
 Install
 -------
 
-OSX:
+On OS X, this installs everything you need:
 
     brew tap thoughtbot/formulae
     brew install parity
@@ -33,18 +16,20 @@ On other systems you can:
 1. Download the package for your system from the [releases page][releases]
 1. Extract the tarball and place it so that `/bin` is in your `PATH`
 
-Alternatively, you can do the following on all systems
-(requires a Ruby installation):
-
-    gem install parity
-
-All these methods install the following three shell commands:
-
-    development
-    staging
-    production
-
 [releases]: https://github.com/thoughtbot/parity/releases
+
+Parity requires these command-line programs:
+
+    git
+    curl
+    heroku
+    pg_restore
+
+On OS X,
+`curl` is installed by default.
+The other programs are installed
+as Homebrew package dependencies of
+the `parity` Homebrew package.
 
 Usage
 -----
