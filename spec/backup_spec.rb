@@ -39,7 +39,7 @@ describe Parity::Backup do
   end
 
   def curl_piped_to_pg_restore
-    "curl -s `heroku pgbackups:url --remote production` | #{pg_restore}"
+    "curl -s `heroku pg:backups public-url --remote production` | #{pg_restore}"
   end
 
   def pg_restore
@@ -47,12 +47,13 @@ describe Parity::Backup do
   end
 
   def heroku_pass_through
-    "heroku pgbackups:restore DATABASE `heroku pgbackups:url "\
-      "--remote production` --remote staging "
+    "heroku pg:backups restore `heroku pg:backups public-url "\
+      "--remote production` DATABASE --remote staging "
   end
 
   def additional_argument_pass_through
-    "heroku pgbackups:restore DATABASE `heroku pgbackups:url "\
-      "--remote production` --remote staging --confirm thisismyapp-staging"
+    "heroku pg:backups restore `heroku pg:backups public-url "\
+      "--remote production` DATABASE --remote staging "\
+      "--confirm thisismyapp-staging"
   end
 end

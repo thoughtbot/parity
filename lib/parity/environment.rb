@@ -31,7 +31,7 @@ module Parity
     end
 
     def backup
-      Kernel.system "heroku pgbackups:capture --expire --remote #{environment}"
+      Kernel.system "heroku pg:backups capture --remote #{environment}"
     end
 
     def deploy
