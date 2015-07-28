@@ -58,11 +58,6 @@ Open a console:
     production console
     staging console
 
-Open [log2viz][1]:
-
-    production log2viz
-    staging log2viz
-
 Migrate a database and restart the dynos:
 
     production migrate
@@ -84,7 +79,6 @@ with `heroku ______ --remote staging` or `heroku ______ --remote production`:
     watch production ps
     staging open
 
-[1]: https://blog.heroku.com/archives/2013/3/19/log2viz
 [2]: http://redis.io/commands
 
 Convention

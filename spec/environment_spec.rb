@@ -91,14 +91,6 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_console)
   end
 
-  it "opens the log2viz visualization" do
-    allow(Kernel).to receive(:system)
-
-    Parity::Environment.new("production", ["log2viz"]).run
-
-    expect(Kernel).to have_received(:system).with(heroku_log2viz)
-  end
-
   it "automatically restarts processes when it migrates the database" do
     allow(Kernel).to receive(:system)
 
@@ -176,10 +168,6 @@ describe Parity::Environment do
 
   def heroku_console
     "heroku run rails console --remote production"
-  end
-
-  def heroku_log2viz
-    "open https://log2viz.herokuapp.com/app/parity-production"
   end
 
   def git_push

@@ -61,10 +61,6 @@ module Parity
       Kernel.system "heroku run rails console --remote #{environment}"
     end
 
-    def log2viz
-      Kernel.system "open https://log2viz.herokuapp.com/app/#{heroku_app_name}"
-    end
-
     def migrate
       Kernel.system %{
         heroku run rake db:migrate --remote #{environment} &&
