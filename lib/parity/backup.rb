@@ -49,7 +49,7 @@ module Parity
     end
 
     def development_db
-      yaml_file = IO.read(Parity.config.database_config_path)
+      yaml_file = IO.read("config/database.yml")
       YAML.load(yaml_file)['development']['database']
     end
   end

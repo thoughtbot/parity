@@ -2,10 +2,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
 
 describe Parity::Backup do
   it "restores backups to development" do
-    Parity.configure do |config|
-      config.database_config_path = database_config_path
-    end
-
+    allow(IO).to receive(:read).and_return(database_fixture)
     allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: "production", to: "development").restore
@@ -27,14 +24,18 @@ describe Parity::Backup do
     Parity::Backup.new(
       from: "production",
       to: "staging",
-      additional_args: "--confirm thisismyapp-staging"
+      additional_args: "--confirm thisismyapp-staging",
     ).restore
 
     expect(Kernel).
       to have_received(:system).with(additional_argument_pass_through)
   end
 
-  def database_config_path
+  def database_fixture
+    IO.read(database_fixture_path)
+  end
+
+  def database_fixture_path
     File.join(File.dirname(__FILE__), 'fixtures', 'database.yml')
   end
 

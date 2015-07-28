@@ -94,55 +94,20 @@ Parity expects:
 
 * A `staging` remote pointing to the staging Heroku app.
 * A `production` remote pointing to the production Heroku app.
-* There is a `config/database.yml` file that can be parsed as Yaml for
+* There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
 * The Heroku apps are named like `app-staging` and `app-production`
   where `app` is equal to `basename $PWD`.
 
-Customization
--------------
-
-Override some of the conventions:
-
-```ruby
-Parity.configure do |config|
-  config.database_config_path = "different/path.yml"
-  config.heroku_app_basename = "different-base-name"
-  config.redis_url_env_variable = "DIFFERENT_REDIS_URL"
-end
-```
-
-If you have Heroku environments beyond staging and production (such as a feature
-environment for each developer), you can add a [binstub] to the `bin` folder of
-your application. Custom environments share behavior with staging: they can be
-backed up and can restore from production.
-
-[binstub]: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
-
-Here's an example binstub for a 'feature-geoff' environment, hosted at
-myapp-feature-geoff.herokuapp.com.
-
-```ruby
-#!/usr/bin/env ruby
-
-require 'parity'
-
-if ARGV.empty?
-  puts Parity::Usage.new
-else
-  Parity::Environment.new('feature-geoff', ARGV).run
-end
-```
-
 Contributing
 ------------
 
-Please see CONTRIBUTING.md for details.
+Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
 
 Releasing
 ---------
 
-See guidelines in RELEASING.md for details
+See guidelines in [`RELEASING.md`](RELEASING.md) for details
 
 License
 -------

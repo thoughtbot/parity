@@ -94,7 +94,7 @@ module Parity
 
     def raw_redis_url
       @redis_to_go_url ||= Open3.capture3(
-        "heroku config:get #{Parity.config.redis_url_env_variable} "\
+        "heroku config:get REDIS_URL "\
         "--remote #{environment}"
       )[0].strip
     end
@@ -104,7 +104,7 @@ module Parity
     end
 
     def basename
-      Parity.config.heroku_app_basename || Dir.pwd.split('/').last
+      Dir.pwd.split("/").last
     end
 
     def skip_migration?

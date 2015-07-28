@@ -124,10 +124,6 @@ describe Parity::Environment do
   end
 
   it "opens a Redis session connected to the environment's Redis service" do
-    Parity.configure do |config|
-      config.redis_url_env_variable = "MYREDIS_URL"
-    end
-
     allow(Open3).to receive(:capture3).and_return(open3_redis_url_fetch_result)
     allow(Kernel).to receive(:system)
 
@@ -144,7 +140,7 @@ describe Parity::Environment do
     )
     expect(Open3).
       to have_received(:capture3).
-      with(fetch_redis_url("MYREDIS_URL")).
+      with(fetch_redis_url("REDIS_URL")).
       once
   end
 
