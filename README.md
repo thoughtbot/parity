@@ -93,6 +93,38 @@ Parity expects:
 * The Heroku apps are named like `app-staging` and `app-production`
   where `app` is equal to `basename $PWD`.
 
+Customization
+-------------
+
+If you have Heroku environments beyond staging and production (such as a feature
+environment for each developer), you can add a [binstub] to the `bin` folder of
+your application. Custom environments share behavior with staging: they can be
+backed up and can restore from production.
+
+Using feature environments requires including Parity as a gem in your
+application's Gemfile.
+
+```ruby
+gem "parity"
+```
+
+[binstub]: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
+
+Here's an example binstub for a 'feature-geoff' environment, hosted at
+myapp-feature-geoff.herokuapp.com.
+
+```ruby
+#!/usr/bin/env ruby
+
+require "parity"
+
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  Parity::Environment.new("feature-geoff", ARGV).run
+end
+```
+
 Contributing
 ------------
 
