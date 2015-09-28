@@ -8,10 +8,12 @@ module Parity
     end
 
     def restore
-      if to == 'development'
+      if to == "development"
         restore_to_development
+      elsif from == "development"
+        restore_from_development
       else
-        restore_to_pass_through
+        restore_to_remote_environment
       end
     end
 
@@ -21,30 +23,36 @@ module Parity
 
     private
 
-    def restore_to_development
-      Kernel.system "#{curl} | #{pg_restore}"
+    def restore_from_development
+      Kernel.system(
+        "heroku pg:push #{development_db} DATABASE_URL --remote #{to} "\
+          "#{additional_args}",
+      )
     end
 
-    def curl
-      "curl -s `#{db_backup_url}`"
+    def restore_to_development
+      Kernel.system(
+        "heroku pg:pull DATABASE_URL #{development_db} --remote #{from} "\
+          "#{additional_args}",
+      )
     end
 
     def pg_restore
       "pg_restore --verbose --clean --no-acl --no-owner -d #{development_db}"
     end
 
-    def restore_to_pass_through
+    def restore_to_remote_environment
       Kernel.system(
         "heroku pg:backups restore #{backup_from} --remote #{to} "\
-          "#{additional_args}"
+          "#{additional_args}",
       )
     end
 
     def backup_from
-      "`#{db_backup_url}` DATABASE"
+      "`#{remote_db_backup_url}` DATABASE"
     end
 
-    def db_backup_url
+    def remote_db_backup_url
       "heroku pg:backups public-url --remote #{from}"
     end
 
