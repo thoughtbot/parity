@@ -35,11 +35,9 @@ module Parity
     end
 
     def deploy
-      skip_migration = skip_migration?
+      deploy_successful = Kernel.system("git push #{environment} master")
 
-      Kernel.system "git push #{environment} master"
-
-      unless skip_migration
+      if deploy_successful && run_migration?
         migrate
       end
     end
@@ -103,8 +101,8 @@ module Parity
       Parity.config.heroku_app_basename || Dir.pwd.split('/').last
     end
 
-    def skip_migration?
-      Kernel.system %{
+    def run_migration?
+      !Kernel.system %{
         git fetch #{environment} &&
         git diff --quiet #{environment}/master..master -- db/migrate
       }

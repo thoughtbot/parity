@@ -142,6 +142,7 @@ describe Parity::Environment do
 
   it "deploys the application and runs migrations when required" do
     allow(Kernel).to receive(:system)
+    allow(Kernel).to receive(:system).with(git_push).and_return(true)
     allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
@@ -153,12 +154,24 @@ describe Parity::Environment do
 
   it "deploys the application and skips migrations when not required" do
     allow(Kernel).to receive(:system)
+    allow(Kernel).to receive(:system).with(git_push).and_return(true)
     allow(Kernel).to receive(:system).with(skip_migration).and_return(true)
 
     Parity::Environment.new("production", ["deploy"]).run
 
     expect(Kernel).to have_received(:system).with(git_push)
     expect(Kernel).to have_received(:system).with(skip_migration)
+    expect(Kernel).not_to have_received(:system).with(migrate)
+  end
+
+  it "does not run migrations if the deploy failed" do
+    allow(Kernel).to receive(:system)
+    allow(Kernel).to receive(:system).with(git_push).and_return(false)
+    allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
+
+    Parity::Environment.new("production", ["deploy"]).run
+
+    expect(Kernel).to have_received(:system).with(git_push)
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
