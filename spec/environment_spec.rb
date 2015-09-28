@@ -171,6 +171,14 @@ describe Parity::Environment do
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
+  it "deploys feature branches to staging's master for evaluation" do
+    allow(Kernel).to receive(:system)
+
+    Parity::Environment.new("staging", ["deploy"]).run
+
+    expect(Kernel).to have_received(:system).with(git_push_feature_branch)
+  end
+
   def heroku_backup
     "heroku pg:backups capture --remote production"
   end
@@ -181,6 +189,10 @@ describe Parity::Environment do
 
   def git_push
     "git push production master"
+  end
+
+  def git_push_feature_branch
+    "git push staging HEAD:master --force"
   end
 
   def skip_migration
