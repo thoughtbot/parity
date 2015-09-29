@@ -7,7 +7,7 @@ RSpec::Core::RakeTask.new('spec')
 task default: :spec
 
 PROJECT_NAME = "parity"
-TRAVELING_RUBY_VERSION = "20150210-2.1.5"
+TRAVELING_RUBY_VERSION = "20150517-2.2.2"
 TRAVELING_RUBY_HOST = "http://d6r77u77i8pq3.cloudfront.net/releases"
 RUBY_BASENAME = "traveling-ruby-#{TRAVELING_RUBY_VERSION}"
 
