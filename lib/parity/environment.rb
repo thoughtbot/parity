@@ -27,18 +27,26 @@ module Parity
     end
 
     def run_via_cli
-      Kernel.system "heroku", subcommand, *arguments, "--remote", environment
+      Kernel.system("heroku", subcommand, *arguments, "--remote", environment)
     end
 
     def backup
-      Kernel.system "heroku pg:backups capture --remote #{environment}"
+      Kernel.system("heroku pg:backups capture --remote #{environment}")
     end
 
     def deploy
-      deploy_successful = Kernel.system("git push #{environment} master")
-
-      if deploy_successful && run_migration?
+      if deploy_to_heroku && run_migration?
         migrate
+      end
+    end
+
+    def deploy_to_heroku
+      if environment == "production"
+        Kernel.system("git push production master")
+      else
+        Kernel.system(
+          "git push #{environment} HEAD:master --force",
+        )
       end
     end
 
@@ -56,14 +64,14 @@ module Parity
     end
 
     def console
-      Kernel.system "heroku run rails console --remote #{environment}"
+      Kernel.system("heroku run rails console --remote #{environment}")
     end
 
     def migrate
-      Kernel.system %{
+      Kernel.system(%{
         heroku run rake db:migrate --remote #{environment} &&
         heroku restart --remote #{environment}
-      }
+      })
     end
 
     def tail
@@ -102,10 +110,10 @@ module Parity
     end
 
     def run_migration?
-      !Kernel.system %{
+      !Kernel.system(%{
         git fetch #{environment} &&
         git diff --quiet #{environment}/master..master -- db/migrate
-      }
+      })
     end
   end
 end
