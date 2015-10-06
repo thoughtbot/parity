@@ -20,31 +20,33 @@ describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_backup)
   end
 
-  it "restores backups from production to staging" do
+  it "restores backups from production to staging with the confirmation argument" do
+    backup = double("backup", restore: nil)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("staging", ["restore", "production"]).run
+
+    expect(Parity::Backup).
+      to have_received(:new).
+      with(
+        from: "production",
+        to: "staging",
+        additional_args: "--confirm parity-staging",
+      )
+    expect(backup).to have_received(:restore)
+  end
+
+  it "passes the confirm argument when restoring to a  non-production environment" do
     backup = double("backup", restore: nil)
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore", "production"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: "production", to: "staging", additional_args: "")
-    expect(backup).to have_received(:restore)
-  end
-
-  it "passes arguments to the restore command when used against staging" do
-    backup = double("backup", restore: nil)
-    allow(Parity::Backup).to receive(:new).and_return(backup)
-
-    Parity::Environment.new(
-      "staging",
-      ["restore", "production", "--confirm", "myappname-staging"]
-    ).run
-
-    expect(Parity::Backup).to have_received(:new).
       with(
         from: "production",
         to: "staging",
-        additional_args: "--confirm myappname-staging"
+        additional_args: "--confirm parity-staging",
       )
     expect(backup).to have_received(:restore)
   end
