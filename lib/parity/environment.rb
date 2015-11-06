@@ -41,7 +41,7 @@ module Parity
     end
 
     def deploy_to_heroku
-      if environment == "production"
+      if production?
         Kernel.system("git push production master")
       else
         Kernel.system(
@@ -51,7 +51,7 @@ module Parity
     end
 
     def restore
-      if environment == "production"
+      if production?
         $stdout.puts "Parity does not support restoring backups into your "\
           "production environment."
       else
@@ -61,6 +61,10 @@ module Parity
           additional_args: arguments.drop(1).join(" ")
         ).restore
       end
+    end
+
+    def production?
+      environment == "production"
     end
 
     def console
