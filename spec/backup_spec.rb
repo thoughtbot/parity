@@ -1,12 +1,15 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
 
 describe Parity::Backup do
-  it "restores backups to development" do
+  it "restores backups to development (after dropping the development DB)" do
     allow(IO).to receive(:read).and_return(database_fixture)
     allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: "production", to: "development").restore
 
+    expect(Kernel).
+      to have_received(:system).
+      with(drop_development_database_drop_command)
     expect(Kernel).
       to have_received(:system).
       with(heroku_production_to_development_passthrough)
@@ -60,6 +63,10 @@ describe Parity::Backup do
 
   def pg_restore
     "pg_restore --verbose --clean --no-acl --no-owner -d parity_development"
+  end
+
+  def drop_development_database_drop_command
+    "dropdb parity_development"
   end
 
   def heroku_development_to_staging_passthrough

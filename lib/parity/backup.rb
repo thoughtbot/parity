@@ -31,6 +31,15 @@ module Parity
     end
 
     def restore_to_development
+      drop_development_database
+      pull_remote_database_to_development
+    end
+
+    def drop_development_database
+      Kernel.system("dropdb #{development_db}")
+    end
+
+    def pull_remote_database_to_development
       Kernel.system(
         "heroku pg:pull DATABASE_URL #{development_db} --remote #{from} "\
           "#{additional_args}",
