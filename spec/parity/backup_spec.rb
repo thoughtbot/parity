@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Backup do
   it "restores backups to development (after dropping the development DB)" do
@@ -54,7 +54,7 @@ describe Parity::Backup do
   end
 
   def database_fixture_path
-    File.join(File.dirname(__FILE__), 'fixtures', 'database.yml')
+    File.join(File.dirname(__FILE__), '..', 'fixtures', 'database.yml')
   end
 
   def heroku_production_to_development_passthrough

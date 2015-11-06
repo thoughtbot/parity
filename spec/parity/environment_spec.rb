@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "..", "lib", "parity")
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Environment do
   it "passes through arguments with correct quoting" do

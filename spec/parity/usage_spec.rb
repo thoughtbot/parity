@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Usage do
   it 'cuts the Usage section out of the README' do
