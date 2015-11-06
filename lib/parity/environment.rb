@@ -128,6 +128,14 @@ module Parity
     end
 
     def run_migration?
+      a_rails_app? && pending_migrations?
+    end
+
+    def a_rails_app?
+      Kernel.system("command -v rake && rake -n db:migrate")
+    end
+
+    def pending_migrations?
       !Kernel.system(%{
         git fetch #{environment} &&
         git diff --quiet #{environment}/master..master -- db/migrate

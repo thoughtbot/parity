@@ -1,9 +1,11 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
-describe Parity::Environment do
-  it "passes through arguments with correct quoting" do
-    allow(Kernel).to receive(:system)
+RSpec.describe Parity::Environment do
+  before do
+    allow(Kernel).to receive(:system).and_return(true)
+  end
 
+  it "passes through arguments with correct quoting" do
     Parity::Environment.new(
       "production",
       ["pg:psql", "-c", "select count(*) from users;"]
@@ -13,8 +15,6 @@ describe Parity::Environment do
   end
 
   it "backs up the database" do
-    allow(Kernel).to receive(:system)
-
     Parity::Environment.new("production", ["backup"]).run
 
     expect(Kernel).to have_received(:system).with(heroku_backup)
@@ -86,32 +86,24 @@ describe Parity::Environment do
   end
 
   it "opens the remote console" do
-    allow(Kernel).to receive(:system)
-
     Parity::Environment.new("production", ["console"]).run
 
     expect(Kernel).to have_received(:system).with(heroku_console)
   end
 
   it "automatically restarts processes when it migrates the database" do
-    allow(Kernel).to receive(:system)
-
     Parity::Environment.new("production", ["migrate"]).run
 
     expect(Kernel).to have_received(:system).with(migrate)
   end
 
   it "tails logs with any additional arguments" do
-    allow(Kernel).to receive(:system)
-
     Parity::Environment.new("production", ["tail", "--ps", "web"]).run
 
     expect(Kernel).to have_received(:system).with(tail)
   end
 
   it "opens the app" do
-    allow(Kernel).to receive(:system)
-
     Parity::Environment.new("production", ["open"]).run
 
     expect(Kernel).to have_received(:system).with(*open)
@@ -119,7 +111,6 @@ describe Parity::Environment do
 
   it "opens a Redis session connected to the environment's Redis service" do
     allow(Open3).to receive(:capture3).and_return(open3_redis_url_fetch_result)
-    allow(Kernel).to receive(:system)
 
     Parity::Environment.new("production", ["redis_cli"]).run
 
@@ -139,22 +130,17 @@ describe Parity::Environment do
   end
 
   it "deploys the application and runs migrations when required" do
-    allow(Kernel).to receive(:system)
-    allow(Kernel).to receive(:system).with(git_push).and_return(true)
     allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
     expect(Kernel).to have_received(:system).with(git_push)
+    expect(Kernel).to have_received(:system).with(rails_app_check)
     expect(Kernel).to have_received(:system).with(skip_migration)
     expect(Kernel).to have_received(:system).with(migrate)
   end
 
   it "deploys the application and skips migrations when not required" do
-    allow(Kernel).to receive(:system)
-    allow(Kernel).to receive(:system).with(git_push).and_return(true)
-    allow(Kernel).to receive(:system).with(skip_migration).and_return(true)
-
     Parity::Environment.new("production", ["deploy"]).run
 
     expect(Kernel).to have_received(:system).with(git_push)
@@ -163,7 +149,6 @@ describe Parity::Environment do
   end
 
   it "does not run migrations if the deploy failed" do
-    allow(Kernel).to receive(:system)
     allow(Kernel).to receive(:system).with(git_push).and_return(false)
     allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
 
@@ -173,9 +158,15 @@ describe Parity::Environment do
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
-  it "deploys feature branches to staging's master for evaluation" do
-    allow(Kernel).to receive(:system)
+  it "does not run migrations if Rake or the `db:migrate` task is not available" do
+    allow(Kernel).to receive(:system).with(rails_app_check).and_return(false)
 
+    Parity::Environment.new("production", ["deploy"]).run
+
+    expect(Kernel).not_to have_received(:system).with(migrate)
+  end
+
+  it "deploys feature branches to staging's master for evaluation" do
     Parity::Environment.new("staging", ["deploy"]).run
 
     expect(Kernel).to have_received(:system).with(git_push_feature_branch)
@@ -241,5 +232,9 @@ describe Parity::Environment do
       "-c", "select count(*) from users;",
       "--remote", "production"
     ]
+  end
+
+  def rails_app_check
+    "command -v rake && rake -n db:migrate"
   end
 end
