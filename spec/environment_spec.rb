@@ -26,25 +26,27 @@ describe Parity::Environment do
 
     Parity::Environment.new("staging", ["restore", "production"]).run
 
-    expect(Parity::Backup).to have_received(:new).
-      with(from: "production", to: "staging", additional_args: "")
+    expect(Parity::Backup).
+      to have_received(:new).
+      with(
+        from: "production",
+        to: "staging",
+        additional_args: "--confirm parity-staging",
+      )
     expect(backup).to have_received(:restore)
   end
 
-  it "passes arguments to the restore command when used against staging" do
+  it "passes the confirm argument when restoring to a non-prod environment" do
     backup = double("backup", restore: nil)
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
-    Parity::Environment.new(
-      "staging",
-      ["restore", "production", "--confirm", "myappname-staging"]
-    ).run
+    Parity::Environment.new("staging", ["restore", "production"]).run
 
     expect(Parity::Backup).to have_received(:new).
       with(
         from: "production",
         to: "staging",
-        additional_args: "--confirm myappname-staging"
+        additional_args: "--confirm parity-staging",
       )
     expect(backup).to have_received(:restore)
   end

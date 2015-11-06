@@ -20,6 +20,8 @@ module Parity
 
     private
 
+    PROTECTED_ENVIRONMENTS = %w(development production)
+
     attr_accessor :environment, :subcommand, :arguments
 
     def open
@@ -58,13 +60,25 @@ module Parity
         Backup.new(
           from: arguments.first,
           to: environment,
-          additional_args: arguments.drop(1).join(" ")
+          additional_args: additional_restore_arguments,
         ).restore
       end
     end
 
     def production?
       environment == "production"
+    end
+
+    def additional_restore_arguments
+      (arguments.drop(1) + [restore_confirmation_argument]).
+        compact.
+        join(" ")
+    end
+
+    def restore_confirmation_argument
+      unless PROTECTED_ENVIRONMENTS.include?(environment)
+        "--confirm #{heroku_app_name}"
+      end
     end
 
     def console
