@@ -1,9 +1,9 @@
-language:
-  - ruby
-
-rvm:
-  - 2.1.5
-
 branches:
   only:
     - master
+cache:
+  - bundler
+language:
+  - ruby
+rvm:
+  - 2.2.0
