@@ -128,10 +128,10 @@ module Parity
     end
 
     def run_migration?
-      a_rails_app? && pending_migrations?
+      rails_app? && pending_migrations?
     end
 
-    def a_rails_app?
+    def rails_app?
       Kernel.system("command -v rake && rake -n db:migrate")
     end
 
