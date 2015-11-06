@@ -40,6 +40,10 @@ module Parity
       end
     end
 
+    def production?
+      environment == "production"
+    end
+
     def deploy_to_heroku
       if production?
         Kernel.system("git push production master")
