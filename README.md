@@ -21,13 +21,10 @@ On other systems you can:
 Parity requires these command-line programs:
 
     git
-    curl
     heroku
     pg_restore
 
-On OS X,
-`curl` is installed by default.
-The other programs are installed
+On OS X, these programs are installed
 as Homebrew package dependencies of
 the `parity` Homebrew package.
 
@@ -47,6 +44,10 @@ Restore a production or staging database backup into development:
 Restore a production database backup into staging:
 
     staging restore production
+
+Push your local development database backup up to staging:
+
+    development restore staging
 
 Deploy from master, and migrate and restart the dynos if necessary:
 
