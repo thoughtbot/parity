@@ -47,7 +47,7 @@ Restore a production database backup into staging:
 
 Push your local development database backup up to staging:
 
-    development restore staging
+    staging restore development
 
 Deploy from master, and migrate and restart the dynos if necessary:
 
