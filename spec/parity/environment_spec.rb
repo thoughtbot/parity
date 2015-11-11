@@ -8,10 +8,21 @@ RSpec.describe Parity::Environment do
   it "passes through arguments with correct quoting" do
     Parity::Environment.new(
       "production",
-      ["pg:psql", "-c", "select count(*) from users;"]
+      ["pg:psql", "-c", "select count(*) from users;"],
     ).run
 
     expect(Kernel).to have_received(:system).with(*psql_count)
+  end
+
+  it "returns `false` when a system command fails" do
+    allow(Kernel).to receive(:system).with(*psql_count).and_return(nil)
+
+    result = Parity::Environment.new(
+      "production",
+      ["pg:psql", "-c", "select count(*) from users;"],
+    ).run
+
+    expect(result).to eq(false)
   end
 
   it "backs up the database" do
@@ -130,27 +141,52 @@ RSpec.describe Parity::Environment do
   end
 
   it "deploys the application and runs migrations when required" do
-    allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
+    allow(Kernel).
+      to receive(:system).
+      with(check_for_migration).
+      and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).to have_received(:system).with(git_push)
-    expect(Kernel).to have_received(:system).with(rails_app_check)
-    expect(Kernel).to have_received(:system).with(skip_migration)
-    expect(Kernel).to have_received(:system).with(migrate)
+    expect(Kernel).to have_received(:system).with(rails_app_check).ordered
+    expect(Kernel).to have_received(:system).with(check_for_migration).ordered
+    expect(Kernel).to have_received(:system).with(git_push).ordered
+    expect(Kernel).to have_received(:system).with(migrate).ordered
   end
 
   it "deploys the application and skips migrations when not required" do
     Parity::Environment.new("production", ["deploy"]).run
 
+    expect(Kernel).to have_received(:system).with(check_for_migration)
     expect(Kernel).to have_received(:system).with(git_push)
-    expect(Kernel).to have_received(:system).with(skip_migration)
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
-  it "does not run migrations if the deploy failed" do
+  it "returns true if the deploy was succesful but no migrations needed to be run" do
+    allow(Kernel).
+      to receive(:system).
+      with(check_for_migration).
+      and_return(true)
+
+    result = Parity::Environment.new("production", ["deploy"]).run
+
+    expect(result).to eq(true)
+  end
+
+  it "returns false if the deploy was not succesful" do
     allow(Kernel).to receive(:system).with(git_push).and_return(false)
-    allow(Kernel).to receive(:system).with(skip_migration).and_return(false)
+
+    result = Parity::Environment.new("production", ["deploy"]).run
+
+    expect(result).to eq(false)
+  end
+
+  it "does not run migrations if the deploy failed" do
+    allow(Kernel).
+      to receive(:system).
+      with(check_for_migration).
+      and_return(false)
+    allow(Kernel).to receive(:system).with(git_push).and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
@@ -188,7 +224,7 @@ RSpec.describe Parity::Environment do
     "git push staging HEAD:master --force"
   end
 
-  def skip_migration
+  def check_for_migration
       %{
         git fetch production &&
         git diff --quiet production/master..master -- db/migrate

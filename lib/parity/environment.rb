@@ -9,6 +9,16 @@ module Parity
     end
 
     def run
+      run_command || false
+    end
+
+    private
+
+    PROTECTED_ENVIRONMENTS = %w(development production)
+
+    attr_accessor :environment, :subcommand, :arguments
+
+    def run_command
       if subcommand == "redis-cli"
         redis_cli
       elsif self.class.private_method_defined?(subcommand)
@@ -17,12 +27,6 @@ module Parity
         run_via_cli
       end
     end
-
-    private
-
-    PROTECTED_ENVIRONMENTS = %w(development production)
-
-    attr_accessor :environment, :subcommand, :arguments
 
     def open
       run_via_cli
@@ -37,8 +41,10 @@ module Parity
     end
 
     def deploy
-      if deploy_to_heroku && run_migration?
-        migrate
+      skip_migrations = !run_migrations?
+
+      if deploy_to_heroku
+        skip_migrations || migrate
       end
     end
 
@@ -127,7 +133,7 @@ module Parity
       Dir.pwd.split("/").last
     end
 
-    def run_migration?
+    def run_migrations?
       rails_app? && pending_migrations?
     end
 
