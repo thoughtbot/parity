@@ -141,31 +141,40 @@ RSpec.describe Parity::Environment do
   end
 
   it "deploys the application and runs migrations when required" do
+    stub_is_a_rails_app
     allow(Kernel).
       to receive(:system).
-      with(check_for_migration).
+      with(check_for_no_pending_migrations).
       and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).to have_received(:system).with(rails_app_check).ordered
-    expect(Kernel).to have_received(:system).with(check_for_migration).ordered
+    expect(Kernel).
+      to have_received(:system).
+      with(check_for_no_pending_migrations).
+      ordered
     expect(Kernel).to have_received(:system).with(git_push).ordered
     expect(Kernel).to have_received(:system).with(migrate).ordered
   end
 
   it "deploys the application and skips migrations when not required" do
+    stub_is_a_rails_app
+    allow(Kernel).
+      to receive(:system).
+      with(check_for_no_pending_migrations).
+      and_return(true)
+
     Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).to have_received(:system).with(check_for_migration)
     expect(Kernel).to have_received(:system).with(git_push)
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
   it "returns true if the deploy was succesful but no migrations needed to be run" do
+    stub_is_a_rails_app
     allow(Kernel).
       to receive(:system).
-      with(check_for_migration).
+      with(check_for_no_pending_migrations).
       and_return(true)
 
     result = Parity::Environment.new("production", ["deploy"]).run
@@ -174,6 +183,7 @@ RSpec.describe Parity::Environment do
   end
 
   it "returns false if the deploy was not succesful" do
+    stub_is_a_rails_app
     allow(Kernel).to receive(:system).with(git_push).and_return(false)
 
     result = Parity::Environment.new("production", ["deploy"]).run
@@ -182,23 +192,35 @@ RSpec.describe Parity::Environment do
   end
 
   it "does not run migrations if the deploy failed" do
+    stub_is_a_rails_app
     allow(Kernel).
       to receive(:system).
-      with(check_for_migration).
+      with(check_for_no_pending_migrations).
       and_return(false)
     allow(Kernel).to receive(:system).with(git_push).and_return(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).to have_received(:system).with(git_push)
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
-  it "does not run migrations if Rake or the `db:migrate` task is not available" do
-    allow(Kernel).to receive(:system).with(rails_app_check).and_return(false)
+  it "does not run migrations if no Rakefile is present" do
+    stub_migration_path_check(true)
+    stub_rakefile_check(false)
 
     Parity::Environment.new("production", ["deploy"]).run
 
+    expect(Kernel).not_to have_received(:system).with(migrate)
+  end
+
+  it "does not run migrations if no db/migrate directory is present" do
+    path_stub = stub_migration_path_check(false)
+    stub_rakefile_check(true)
+
+    Parity::Environment.new("production", ["deploy"]).run
+
+    expect(path_stub).to have_received(:join).with("migrate").ordered
+    expect(path_stub).to have_received(:directory?).ordered
     expect(Kernel).not_to have_received(:system).with(migrate)
   end
 
@@ -224,7 +246,7 @@ RSpec.describe Parity::Environment do
     "git push staging HEAD:master --force"
   end
 
-  def check_for_migration
+  def check_for_no_pending_migrations
       %{
         git fetch production &&
         git diff --quiet production/master..master -- db/migrate
@@ -270,7 +292,19 @@ RSpec.describe Parity::Environment do
     ]
   end
 
-  def rails_app_check
-    "command -v rake && rake -n db:migrate"
+  def stub_is_a_rails_app
+    stub_rakefile_check(true)
+    stub_migration_path_check(true)
+  end
+
+  def stub_rakefile_check(result)
+    allow(File).to receive(:exists?).with("Rakefile").and_return(result)
+  end
+
+  def stub_migration_path_check(result)
+    path_stub = spy("Pathname", directory?: result)
+    allow(Pathname).to receive(:new).with("db").and_return(path_stub)
+
+    path_stub
   end
 end

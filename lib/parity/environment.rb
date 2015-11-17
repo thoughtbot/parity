@@ -138,7 +138,15 @@ module Parity
     end
 
     def rails_app?
-      Kernel.system("command -v rake && rake -n db:migrate")
+      has_rakefile? && has_migrations_folder?
+    end
+
+    def has_migrations_folder?
+      Pathname.new("db").join("migrate").directory?
+    end
+
+    def has_rakefile?
+      File.exists?("Rakefile")
     end
 
     def pending_migrations?
