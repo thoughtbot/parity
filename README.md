@@ -49,10 +49,17 @@ Push your local development database backup up to staging:
 
     staging restore development
 
-Deploy from master, and migrate and restart the dynos if necessary:
+Deploy from master to production
+and migrate and restart the dynos if necessary:
 
     production deploy
+
+Deploy the current branch to staging or a feature branch
+and migrate and restart the dynos if necessary:
+
     staging deploy
+
+_Note that deploys to non-production environments use `git push --force`._
 
 Open a console:
 
