@@ -5,6 +5,7 @@ describe Parity::Usage do
     usage = Parity::Usage.new.to_s
 
     expect(usage).to match(/The scripts also pass through/)
+    expect(usage).to match(/staging open/)
     expect(usage).not_to match(/Install/)
     expect(usage).not_to match(/Convention/)
   end

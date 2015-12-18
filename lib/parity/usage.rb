@@ -1,7 +1,7 @@
 module Parity
   class Usage
     def to_s
-      File.read(readme).match(/Usage\n-----\n([^\/.]*)staging open/)[1]
+      File.read(readme).match(/Usage\n-----\n(.+)\nConvention\n------/m)[1]
     end
 
     private
