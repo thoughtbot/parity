@@ -61,10 +61,6 @@ describe Parity::Backup do
     "heroku pg:pull DATABASE_URL parity_development --remote production "
   end
 
-  def pg_restore
-    "pg_restore --verbose --clean --no-acl --no-owner -d parity_development"
-  end
-
   def drop_development_database_drop_command
     "dropdb parity_development"
   end

@@ -46,10 +46,6 @@ module Parity
       )
     end
 
-    def pg_restore
-      "pg_restore --verbose --clean --no-acl --no-owner -d #{development_db}"
-    end
-
     def restore_to_remote_environment
       Kernel.system(
         "heroku pg:backups restore #{backup_from} --remote #{to} "\
