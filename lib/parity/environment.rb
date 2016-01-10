@@ -19,10 +19,8 @@ module Parity
     attr_accessor :environment, :subcommand, :arguments
 
     def run_command
-      if subcommand == "redis-cli"
-        redis_cli
-      elsif self.class.private_method_defined?(subcommand)
-        send(subcommand)
+      if self.class.private_method_defined?(methodized_subcommand)
+        send(methodized_subcommand)
       else
         run_via_cli
       end
@@ -70,6 +68,8 @@ module Parity
         ).restore
       end
     end
+
+    alias :restore_from :restore
 
     def production?
       environment == "production"
@@ -154,6 +154,10 @@ module Parity
         git fetch #{environment} &&
         git diff --quiet #{environment}/master..master -- db/migrate
       })
+    end
+
+    def methodized_subcommand
+      subcommand.gsub("-", "_").to_sym
     end
   end
 end

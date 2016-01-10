@@ -38,16 +38,16 @@ Backup a database:
 
 Restore a production or staging database backup into development:
 
-    development restore production
-    development restore staging
+    development restore-from production
+    development restore-from staging
 
 Restore a production database backup into staging:
 
-    staging restore production
+    staging restore-from production
 
 Push your local development database backup up to staging:
 
-    staging restore development
+    staging restore-from development
 
 Deploy from master to production
 and migrate and restart the dynos if necessary:

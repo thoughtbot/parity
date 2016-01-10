@@ -47,6 +47,22 @@ RSpec.describe Parity::Environment do
     expect(backup).to have_received(:restore)
   end
 
+  it "restores using restore-from" do
+    backup = double("backup", restore: nil)
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("staging", ["restore-from", "production"]).run
+
+    expect(Parity::Backup).
+      to have_received(:new).
+      with(
+        from: "production",
+        to: "staging",
+        additional_args: "--confirm parity-staging",
+      )
+    expect(backup).to have_received(:restore)
+  end
+
   it "passes the confirm argument when restoring to a non-prod environment" do
     backup = double("backup", restore: nil)
     allow(Parity::Backup).to receive(:new).and_return(backup)
