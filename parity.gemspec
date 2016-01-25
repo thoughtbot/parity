@@ -17,4 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.summary = "Shell commands for development, staging, and production parity."
   spec.version = Parity::VERSION
+
+  spec.add_dependency "git", "~> 1.2"
+  spec.add_dependency "rake", "~> 10.4"
 end

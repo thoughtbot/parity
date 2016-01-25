@@ -125,12 +125,12 @@ module Parity
       )[0].strip
     end
 
-    def heroku_app_name
-      [basename, environment].join('-')
+    def git_remote
+      Git.init.remote(environment).url
     end
 
-    def basename
-      Dir.pwd.split("/").last
+    def heroku_app_name
+      git_remote.split(":").last.split(".").first
     end
 
     def run_migrations?

@@ -98,8 +98,6 @@ Parity expects:
 * A `production` remote pointing to the production Heroku app.
 * There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
-* The Heroku apps are named like `app-staging` and `app-production`
-  where `app` is equal to `basename $PWD`.
 
 Customization
 -------------

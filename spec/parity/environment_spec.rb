@@ -31,8 +31,26 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_backup)
   end
 
+  it "correctly connects to the Heroku app when the $PWD's name does not match the app's name" do
+    backup = stub_parity_backup
+    stub_git_remote(base_name: "parity-integration", environment: "staging")
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("staging", ["restore", "production"]).run
+
+    expect(Parity::Backup).
+      to have_received(:new).
+      with(
+        from: "production",
+        to: "staging",
+        additional_args: "--confirm parity-integration-staging",
+      )
+    expect(backup).to have_received(:restore)
+  end
+
   it "restores backups from production to staging" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
+    stub_git_remote(environment: "staging")
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore", "production"]).run
@@ -48,7 +66,8 @@ RSpec.describe Parity::Environment do
   end
 
   it "restores using restore-from" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
+    stub_git_remote(environment: "staging")
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore-from", "production"]).run
@@ -64,7 +83,8 @@ RSpec.describe Parity::Environment do
   end
 
   it "passes the confirm argument when restoring to a non-prod environment" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
+    stub_git_remote(environment: "staging")
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore", "production"]).run
@@ -79,7 +99,7 @@ RSpec.describe Parity::Environment do
   end
 
   it "restores backups from production to development" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("development", ["restore", "production"]).run
@@ -90,7 +110,7 @@ RSpec.describe Parity::Environment do
   end
 
   it "restores backups from staging to development" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("development", ["restore", "staging"]).run
@@ -101,7 +121,8 @@ RSpec.describe Parity::Environment do
   end
 
   it "does not allow restoring backups into production" do
-    backup = double("backup", restore: nil)
+    backup = stub_parity_backup
+    stub_git_remote
     allow(Parity::Backup).to receive(:new).and_return(backup)
     allow($stdout).to receive(:puts)
 
@@ -322,5 +343,19 @@ RSpec.describe Parity::Environment do
     allow(Pathname).to receive(:new).with("db").and_return(path_stub)
 
     path_stub
+  end
+
+  def stub_git_remote(base_name: "parity", environment: "staging")
+    git_remote = instance_double(
+      "Git::Remote",
+      url: "git@heroku.com:#{base_name}-#{environment}.git",
+    )
+    git = instance_double("Git::Base")
+    allow(git).to receive(:remote).with("staging").and_return(git_remote)
+    allow(Git).to receive(:init).and_return(git)
+  end
+
+  def stub_parity_backup
+    instance_double("Parity::Backup", restore: nil)
   end
 end
