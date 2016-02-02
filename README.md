@@ -36,14 +36,15 @@ Backup a database:
     production backup
     staging backup
 
-Restore a production or staging database backup into development (`restore-from` is an alias for `restore`):
+Restore a production or staging database backup into development:
 
     development restore production
     development restore staging
 
-Restore a production database backup into staging:
+Or, if `restore-from` reads better to you, it's the same thing:
 
-    staging restore production
+    development restore-from production
+    development restore-from staging
 
 Push your local development database backup up to staging:
 
