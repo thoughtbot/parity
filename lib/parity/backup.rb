@@ -1,16 +1,19 @@
-require 'yaml'
-
 module Parity
   class Backup
+    BLANK_ARGUMENTS = "".freeze
+    DATABASE_YML_RELATIVE_PATH = "config/database.yml".freeze
+    DEVELOPMENT_ENVIRONMENT_KEY_NAME = "development".freeze
+    DATABASE_KEY_NAME = "database".freeze
+
     def initialize(args)
       @from, @to = args.values_at(:from, :to)
-      @additional_args = args[:additional_args] || ""
+      @additional_args = args[:additional_args] || BLANK_ARGUMENTS
     end
 
     def restore
-      if to == "development"
+      if to == DEVELOPMENT_ENVIRONMENT_KEY_NAME
         restore_to_development
-      elsif from == "development"
+      elsif from == DEVELOPMENT_ENVIRONMENT_KEY_NAME
         restore_from_development
       else
         restore_to_remote_environment
@@ -62,8 +65,15 @@ module Parity
     end
 
     def development_db
-      yaml_file = IO.read("config/database.yml")
-      YAML.load(yaml_file)['development']['database']
+      YAML.load(parsed_database_yml).
+        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME).
+        fetch(DATABASE_KEY_NAME)
+    end
+
+    def parsed_database_yml
+      Dotenv.load
+      yaml_file = IO.read(DATABASE_YML_RELATIVE_PATH)
+      ERB.new(yaml_file).result
     end
   end
 end

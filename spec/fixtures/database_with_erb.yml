@@ -1,0 +1,6 @@
+default: &default
+  reconnect: true
+
+development: &development
+  <<: *default
+  database: <%= ENV["DEVELOPMENT_DATABASE_NAME"] %>

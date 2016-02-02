@@ -1,3 +1,5 @@
+require "climate_control"
+
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Backup do
@@ -13,6 +15,35 @@ describe Parity::Backup do
     expect(Kernel).
       to have_received(:system).
       with(heroku_production_to_development_passthrough)
+  end
+
+  context "with a database.yml that uses ERB and environment variables" do
+    around do |example|
+      ClimateControl.modify DEVELOPMENT_DATABASE_NAME: "erb_database_name" do
+        example.run
+      end
+    end
+
+    it "correctly parses database.yml" do
+      development_db = ENV["DEVELOPMENT_DATABASE_NAME"]
+      allow(IO).to receive(:read).and_return(database_with_erb_fixture)
+      allow(Kernel).to receive(:system)
+
+      Parity::Backup.new(from: "production", to: "development").restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(
+          drop_development_database_drop_command(db_name: development_db),
+        )
+      expect(Kernel).
+        to have_received(:system).
+        with(
+          heroku_production_to_development_passthrough(
+            db_name: development_db,
+          ),
+        )
+    end
   end
 
   it "restores backups to staging from production" do
@@ -50,23 +81,27 @@ describe Parity::Backup do
   end
 
   def database_fixture
-    IO.read(database_fixture_path)
+    IO.read(fixture_path("database.yml"))
   end
 
-  def database_fixture_path
-    File.join(File.dirname(__FILE__), '..', 'fixtures', 'database.yml')
+  def database_with_erb_fixture
+    IO.read(fixture_path("database_with_erb.yml"))
   end
 
-  def heroku_production_to_development_passthrough
-    "heroku pg:pull DATABASE_URL parity_development --remote production "
+  def fixture_path(filename)
+    File.join(File.dirname(__FILE__), "..", "fixtures", filename)
   end
 
-  def drop_development_database_drop_command
-    "dropdb parity_development"
+  def heroku_production_to_development_passthrough(db_name: default_db_name)
+    "heroku pg:pull DATABASE_URL #{db_name} --remote production "
   end
 
-  def heroku_development_to_staging_passthrough
-    "heroku pg:push parity_development DATABASE_URL --remote staging "
+  def drop_development_database_drop_command(db_name: default_db_name)
+    "dropdb #{db_name}"
+  end
+
+  def heroku_development_to_staging_passthrough(db_name: default_db_name)
+    "heroku pg:push #{db_name} DATABASE_URL --remote staging "
   end
 
   def heroku_production_to_staging_passthrough
@@ -78,5 +113,9 @@ describe Parity::Backup do
     "heroku pg:backups restore `heroku pg:backups public-url "\
       "--remote production` DATABASE --remote staging "\
       "--confirm thisismyapp-staging"
+  end
+
+  def default_db_name
+    "parity_development"
   end
 end
