@@ -36,18 +36,18 @@ Backup a database:
     production backup
     staging backup
 
-Restore a production or staging database backup into development:
+Restore a production or staging database backup into development (`restore-from` is an alias for `restore`):
 
-    development restore-from production
-    development restore-from staging
+    development restore production
+    development restore staging
 
 Restore a production database backup into staging:
 
-    staging restore-from production
+    staging restore production
 
 Push your local development database backup up to staging:
 
-    staging restore-from development
+    staging restore development
 
 Deploy from master to production
 and migrate and restart the dynos if necessary:
@@ -144,7 +144,7 @@ See guidelines in [`RELEASING.md`](RELEASING.md) for details
 License
 -------
 
-Parity is © 2013-2015 thoughtbot, inc.
+Parity is © 2013-2016 thoughtbot, inc.
 It is free software,
 and may be redistributed under the terms specified in the [LICENSE] file.
 
