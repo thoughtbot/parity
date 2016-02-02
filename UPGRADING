@@ -1,0 +1,16 @@
+##################################################
+#  NOTE FOR UPGRADING FROM 0.9.3 OR EARLIER      #
+##################################################
+
+As of version 1.0.0, Parity no longer distributes its executables via Rubygems.
+
+If you use apt or Homebrew to install dependencies, you can install Parity
+through those package managers to get the `development`, `staging`, and
+`production` executables. Installing the executables via package manager makes
+the programs available across Ruby versions.
+
+Users without access to those package managers or who prefer to self-install can
+find the executables at our Github repository:
+
+https://github.com/thoughtbot/parity
+
