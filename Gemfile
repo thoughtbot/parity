@@ -1,11 +1,10 @@
 source 'https://rubygems.org'
 
-gemspec
-
 gem "dotenv"
+gem "git"
 gem "rake"
 
-group :development, :test do
+group :development do
   gem "climate_control"
   gem "rspec"
 end

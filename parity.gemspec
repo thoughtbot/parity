@@ -1,7 +1,7 @@
 require File.expand_path("../lib/parity/version", __FILE__)
 
 Gem::Specification.new do |spec|
-  spec.authors = ["Dan Croak"]
+  spec.authors = ["Dan Croak", "Geoff Harcourt"]
 
   spec.description = <<-eos
     Development/staging/production parity makes it easier for
@@ -17,7 +17,4 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.summary = "Shell commands for development, staging, and production parity."
   spec.version = Parity::VERSION
-
-  spec.add_dependency "git", "~> 1.2"
-  spec.add_dependency "rake", "~> 10.4"
 end
