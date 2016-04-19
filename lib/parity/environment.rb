@@ -59,9 +59,9 @@ module Parity
     end
 
     def restore
-      if production?
+      if production? && !forced?
         $stdout.puts "Parity does not support restoring backups into your "\
-          "production environment."
+          "production environment. Use `--force` to override."
       else
         Backup.new(
           from: arguments.first,
@@ -75,6 +75,10 @@ module Parity
 
     def production?
       environment == "production"
+    end
+
+    def forced?
+      arguments.include?("--force")
     end
 
     def additional_restore_arguments

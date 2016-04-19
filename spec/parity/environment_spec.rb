@@ -150,7 +150,19 @@ RSpec.describe Parity::Environment do
 
     expect(Parity::Backup).not_to have_received(:new)
     expect($stdout).to have_received(:puts).
-      with("Parity does not support restoring backups into your production environment.")
+      with("Parity does not support restoring backups into your production "\
+           "environment. Use `--force` to override.")
+  end
+
+  it "restores backups into production if forced" do
+    backup = stub_parity_backup
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("production", ["restore", "staging", "--force"]).run
+
+    expect(Parity::Backup).to have_received(:new).
+      with(from: "staging", to: "production", additional_args: "--force")
+    expect(backup).to have_received(:restore)
   end
 
   it "opens the remote console" do
