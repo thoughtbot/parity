@@ -14,6 +14,8 @@ module Parity
 
     private
 
+    GIT_REMOTE_SEGMENT_DELIMITER_REGEX = /[\/:]/
+    GIT_REMOTE_FILE_EXTENSION_REGEX = /\.git$/
     PROTECTED_ENVIRONMENTS = %w(development production)
 
     attr_accessor :environment, :subcommand, :arguments
@@ -130,7 +132,9 @@ module Parity
     end
 
     def heroku_app_name
-      git_remote.split(":").last.split(".").first
+      git_remote.
+        split(GIT_REMOTE_SEGMENT_DELIMITER_REGEX).
+        last.sub(GIT_REMOTE_FILE_EXTENSION_REGEX, "")
     end
 
     def run_migrations?

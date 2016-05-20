@@ -31,9 +31,29 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_backup)
   end
 
-  it "correctly connects to the Heroku app when the $PWD's name does not match the app's name" do
+  it "correctly connects to the Heroku app when the $PWD's name does not match the app's name (remote uses git:// protocol)" do
     backup = stub_parity_backup
     stub_git_remote(base_name: "parity-integration", environment: "staging")
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("staging", ["restore", "production"]).run
+
+    expect(Parity::Backup).
+      to have_received(:new).
+      with(
+        from: "production",
+        to: "staging",
+        additional_args: "--confirm parity-integration-staging",
+      )
+    expect(backup).to have_received(:restore)
+  end
+
+  it "correctly connects to the Heroku app when the $PWD's name does not match the app's name (remote uses https:// protocol)" do
+    backup = stub_parity_backup
+    stub_git_remote_for_https(
+      base_name: "parity-integration",
+      environment: "staging",
+    )
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
     Parity::Environment.new("staging", ["restore", "production"]).run
@@ -349,6 +369,16 @@ RSpec.describe Parity::Environment do
     git_remote = instance_double(
       "Git::Remote",
       url: "git@heroku.com:#{base_name}-#{environment}.git",
+    )
+    git = instance_double("Git::Base")
+    allow(git).to receive(:remote).with("staging").and_return(git_remote)
+    allow(Git).to receive(:init).and_return(git)
+  end
+
+  def stub_git_remote_for_https(base_name: "parity", environment: "staging")
+    git_remote = instance_double(
+      "Git::Remote",
+      url: "https://git.heroku.com/#{base_name}-#{environment}.git",
     )
     git = instance_double("Git::Base")
     allow(git).to receive(:remote).with("staging").and_return(git_remote)
