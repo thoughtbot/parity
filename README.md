@@ -97,8 +97,13 @@ Parity expects:
 
 * A `staging` remote pointing to the staging Heroku app.
 * A `production` remote pointing to the production Heroku app.
+```
+heroku git:remote -r staging -a your-staging-app
+heroku git:remote -r production -a your-production-app
+```
 * There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
+
 
 Customization
 -------------
