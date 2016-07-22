@@ -65,15 +65,13 @@ module Parity
     end
 
     def development_db
-      YAML.load(parsed_database_yml).
+      YAML.load(database_yaml_file).
         fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME).
         fetch(DATABASE_KEY_NAME)
     end
 
-    def parsed_database_yml
-      Dotenv.load
-      yaml_file = IO.read(DATABASE_YML_RELATIVE_PATH)
-      ERB.new(yaml_file).result
+    def database_yaml_file
+      IO.read(DATABASE_YML_RELATIVE_PATH)
     end
   end
 end

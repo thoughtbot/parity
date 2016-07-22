@@ -14,8 +14,6 @@ module Parity
 
     private
 
-    GIT_REMOTE_SEGMENT_DELIMITER_REGEX = /[\/:]/
-    GIT_REMOTE_FILE_EXTENSION_REGEX = /\.git$/
     PROTECTED_ENVIRONMENTS = %w(development production)
 
     attr_accessor :environment, :subcommand, :arguments
@@ -94,19 +92,19 @@ module Parity
     end
 
     def console
-      Kernel.system("heroku run rails console --remote #{environment}")
+      Kernel.system(command_for_remote("run rails console"))
     end
 
     def migrate
       Kernel.system(%{
-        heroku run rake db:migrate --remote #{environment} &&
-        heroku restart --remote #{environment}
+        #{command_for_remote('run rake db:migrate')} &&
+        #{command_for_remote('restart')}
       })
     end
 
     def tail
       Kernel.system(
-        "heroku logs --tail #{arguments.join(" ")} --remote #{environment}"
+        command_for_remote("logs --tail #{arguments.join(' ')}"),
       )
     end
 
@@ -125,20 +123,20 @@ module Parity
     end
 
     def raw_redis_url
-      @redis_to_go_url ||= Open3.capture3(
-        "heroku config:get REDIS_URL "\
-        "--remote #{environment}"
-      )[0].strip
-    end
-
-    def git_remote
-      Git.init.remote(environment).url
+      @redis_to_go_url ||= Open3.
+        capture3(command_for_remote("config:get REDIS_URL"))[0].
+        strip
     end
 
     def heroku_app_name
-      git_remote.
-        split(GIT_REMOTE_SEGMENT_DELIMITER_REGEX).
-        last.sub(GIT_REMOTE_FILE_EXTENSION_REGEX, "")
+      @heroku_app_name ||= Open3.
+        capture3(command_for_remote("info"))[0].
+        split("\n")[0].
+        gsub(/(\s|=)+/, "")
+    end
+
+    def command_for_remote(command)
+      "heroku #{command} --remote #{environment}"
     end
 
     def run_migrations?

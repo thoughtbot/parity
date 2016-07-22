@@ -1,5 +1,3 @@
-require "climate_control"
-
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Backup do
@@ -15,35 +13,6 @@ describe Parity::Backup do
     expect(Kernel).
       to have_received(:system).
       with(heroku_production_to_development_passthrough)
-  end
-
-  context "with a database.yml that uses ERB and environment variables" do
-    around do |example|
-      ClimateControl.modify DEVELOPMENT_DATABASE_NAME: "erb_database_name" do
-        example.run
-      end
-    end
-
-    it "correctly parses database.yml" do
-      development_db = ENV["DEVELOPMENT_DATABASE_NAME"]
-      allow(IO).to receive(:read).and_return(database_with_erb_fixture)
-      allow(Kernel).to receive(:system)
-
-      Parity::Backup.new(from: "production", to: "development").restore
-
-      expect(Kernel).
-        to have_received(:system).
-        with(
-          drop_development_database_drop_command(db_name: development_db),
-        )
-      expect(Kernel).
-        to have_received(:system).
-        with(
-          heroku_production_to_development_passthrough(
-            db_name: development_db,
-          ),
-        )
-    end
   end
 
   it "restores backups to staging from production" do
