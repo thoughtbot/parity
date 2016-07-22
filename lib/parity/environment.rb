@@ -33,7 +33,7 @@ module Parity
     end
 
     def run_via_cli
-      Kernel.system("heroku", subcommand, *arguments, "--remote", environment)
+      Kernel.exec("heroku", subcommand, *arguments, "--remote", environment)
     end
 
     def backup

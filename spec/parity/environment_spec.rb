@@ -2,6 +2,7 @@ require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 RSpec.describe Parity::Environment do
   before do
+    allow(Kernel).to receive(:exec).and_return(true)
     allow(Kernel).to receive(:system).and_return(true)
   end
 
@@ -11,11 +12,11 @@ RSpec.describe Parity::Environment do
       ["pg:psql", "-c", "select count(*) from users;"],
     ).run
 
-    expect(Kernel).to have_received(:system).with(*psql_count)
+    expect(Kernel).to have_received(:exec).with(*psql_count)
   end
 
   it "returns `false` when a system command fails" do
-    allow(Kernel).to receive(:system).with(*psql_count).and_return(nil)
+    allow(Kernel).to receive(:exec).with(*psql_count).and_return(nil)
 
     result = Parity::Environment.new(
       "production",
@@ -186,7 +187,7 @@ RSpec.describe Parity::Environment do
   it "opens the app" do
     Parity::Environment.new("production", ["open"]).run
 
-    expect(Kernel).to have_received(:system).with(*open)
+    expect(Kernel).to have_received(:exec).with(*open)
   end
 
   it "opens a Redis session connected to the environment's Redis service" do
