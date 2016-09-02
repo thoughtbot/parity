@@ -34,19 +34,31 @@ module Parity
     end
 
     def restore_to_development
-      drop_development_database
-      pull_remote_database_to_development
+      download_remote_backup
+      wipe_development_database
+      restore_from_local_temp_backup
+      delete_local_temp_backup
     end
 
-    def drop_development_database
-      Kernel.system("dropdb #{development_db}")
+    def wipe_development_database
+      Kernel.system("dropdb #{development_db} && createdb #{development_db}")
     end
 
-    def pull_remote_database_to_development
+    def download_remote_backup
       Kernel.system(
-        "heroku pg:pull DATABASE_URL #{development_db} --remote #{from} "\
-          "#{additional_args}",
+        "curl -o tmp/latest.backup \"$(#{from} pg:backups public-url -q)\"",
       )
+    end
+
+    def restore_from_local_temp_backup
+      Kernel.system(
+        "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
+          "-d #{development_db} #{additional_args}",
+      )
+    end
+
+    def delete_local_temp_backup
+      Kernel.system("rm tmp/latest.backup")
     end
 
     def restore_to_remote_environment

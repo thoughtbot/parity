@@ -9,10 +9,16 @@ describe Parity::Backup do
 
     expect(Kernel).
       to have_received(:system).
+      with(download_remote_database_command)
+    expect(Kernel).
+      to have_received(:system).
       with(drop_development_database_drop_command)
     expect(Kernel).
       to have_received(:system).
-      with(heroku_production_to_development_passthrough)
+      with(restore_from_local_temp_backup_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(delete_local_temp_backup_command)
   end
 
   it "restores backups to staging from production" do
@@ -61,12 +67,21 @@ describe Parity::Backup do
     File.join(File.dirname(__FILE__), "..", "fixtures", filename)
   end
 
-  def heroku_production_to_development_passthrough(db_name: default_db_name)
-    "heroku pg:pull DATABASE_URL #{db_name} --remote production "
+  def drop_development_database_drop_command(db_name: default_db_name)
+    "dropdb #{db_name} && createdb #{db_name}"
   end
 
-  def drop_development_database_drop_command(db_name: default_db_name)
-    "dropdb #{db_name}"
+  def download_remote_database_command
+    'curl -o tmp/latest.backup "$(production pg:backups public-url -q)"'
+  end
+
+  def restore_from_local_temp_backup_command
+    "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
+      "-d #{default_db_name} "
+  end
+
+  def delete_local_temp_backup_command
+    "rm tmp/latest.backup"
   end
 
   def heroku_development_to_staging_passthrough(db_name: default_db_name)
