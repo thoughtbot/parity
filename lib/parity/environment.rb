@@ -158,8 +158,16 @@ module Parity
     def pending_migrations?
       !Kernel.system(%{
         git fetch #{environment} &&
-        git diff --quiet #{environment}/master..master -- db/migrate
+        git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
       })
+    end
+    
+    def compare_with
+      if production?
+        "master"
+      else
+        "HEAD"
+      end
     end
 
     def methodized_subcommand

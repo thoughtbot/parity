@@ -190,34 +190,57 @@ RSpec.describe Parity::Environment do
       once
   end
 
-  it "deploys the application and runs migrations when required" do
-    stub_is_a_rails_app
-    allow(Kernel).
-      to receive(:system).
-      with(check_for_no_pending_migrations).
-      and_return(false)
+  describe "database migration on deploy" do
+    it "deploys the application and runs migrations when required" do
+      stub_is_a_rails_app
+      allow(Kernel).
+        to receive(:system).
+        with(check_for_no_pending_migrations).
+        and_return(false)
 
-    Parity::Environment.new("production", ["deploy"]).run
+      Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).
-      to have_received(:system).
-      with(check_for_no_pending_migrations).
-      ordered
-    expect(Kernel).to have_received(:system).with(git_push).ordered
-    expect(Kernel).to have_received(:system).with(migrate).ordered
-  end
+      expect(Kernel).
+        to have_received(:system).
+        with(check_for_no_pending_migrations).
+        ordered
+      expect(Kernel).to have_received(:system).with(git_push).ordered
+      expect(Kernel).to have_received(:system).with(migrate).ordered
+    end
 
-  it "deploys the application and skips migrations when not required" do
-    stub_is_a_rails_app
-    allow(Kernel).
-      to receive(:system).
-      with(check_for_no_pending_migrations).
-      and_return(true)
+    it "deploys the application and skips migrations when not required" do
+      stub_is_a_rails_app
+      allow(Kernel).
+        to receive(:system).
+        with(check_for_no_pending_migrations).
+        and_return(true)
 
-    Parity::Environment.new("production", ["deploy"]).run
+      Parity::Environment.new("production", ["deploy"]).run
 
-    expect(Kernel).to have_received(:system).with(git_push)
-    expect(Kernel).not_to have_received(:system).with(migrate)
+      expect(Kernel).to have_received(:system).with(git_push)
+      expect(Kernel).not_to have_received(:system).with(migrate)
+    end
+
+    context "when deploying to a non-production environment" do
+      it "compares against HEAD to check for pending migrations" do
+        stub_is_a_rails_app
+        allow(Kernel).
+          to receive(:system).
+          with(check_for_no_pending_migrations).
+          and_return(false)
+
+        Parity::Environment.new("staging", ["deploy"]).run
+
+        expect(Kernel).
+          to have_received(:system).
+          with(
+            check_for_no_pending_migrations(
+              compare_with: "HEAD",
+              environment: "staging",
+            )
+          ).ordered
+      end
+    end
   end
 
   it "returns true if the deploy was succesful but no migrations needed to be run" do
@@ -296,10 +319,10 @@ RSpec.describe Parity::Environment do
     "git push staging HEAD:master --force"
   end
 
-  def check_for_no_pending_migrations
+  def check_for_no_pending_migrations(compare_with: "master", environment: "production")
       %{
-        git fetch production &&
-        git diff --quiet production/master..master -- db/migrate
+        git fetch #{environment} &&
+        git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
       }
   end
 
