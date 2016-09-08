@@ -156,10 +156,10 @@ module Parity
     end
 
     def pending_migrations?
-      branch_to_compare = production? ? 'master' : 'HEAD'
+      compare_with = production? ? "master" : "HEAD"
       !Kernel.system(%{
         git fetch #{environment} &&
-        git diff --quiet #{environment}/master..#{branch_to_compare} -- db/migrate
+        git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
       })
     end
 
