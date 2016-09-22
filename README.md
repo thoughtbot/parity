@@ -104,6 +104,8 @@ heroku git:remote -r production -a your-production-app
 * There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
 
+* For dockerized apps, there is a `docker-compose.yml` file with a service called `db` for your postgres database and you mounted /tmp folder.
+
 
 Customization
 -------------
