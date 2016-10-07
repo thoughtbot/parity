@@ -21,6 +21,30 @@ describe Parity::Backup do
       with(delete_local_temp_backup_command)
   end
 
+  it "restores backups to dockerized development (after dropping the development DB)" do
+    allow(IO).to receive(:read).and_return(docker_compose_fixture, database_fixture)
+    allow(File).to receive(:exists?).and_return(docker_compose_fixture_exists?)
+    allow(Kernel).to receive(:system)
+
+    Parity::Backup.new(from: "production", to: "development").restore
+
+    expect(Kernel).
+      to have_received(:system).
+      with(download_remote_database_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(drop_dockerized_development_database_drop_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(create_dockerized_development_database_create_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(dockerized_restore_from_local_temp_backup_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(delete_local_temp_backup_command)
+  end
+
   it "restores backups to staging from production" do
     allow(Kernel).to receive(:system)
 
@@ -59,6 +83,14 @@ describe Parity::Backup do
     IO.read(fixture_path("database.yml"))
   end
 
+  def docker_compose_fixture
+    IO.read(fixture_path("docker-compose.yml"))
+  end
+
+  def docker_compose_fixture_exists?
+    File.exists?(fixture_path("docker-compose.yml"))
+  end
+
   def database_with_erb_fixture
     IO.read(fixture_path("database_with_erb.yml"))
   end
@@ -71,8 +103,22 @@ describe Parity::Backup do
     "dropdb #{db_name} && createdb #{db_name}"
   end
 
+  def drop_dockerized_development_database_drop_command(db_name: default_db_name)
+    "docker-compose exec db dropdb -U postgres #{db_name}"
+  end
+
+  def create_dockerized_development_database_create_command(db_name: default_db_name)
+    "docker-compose exec db createdb -U postgres #{db_name}"
+  end
+
   def download_remote_database_command
     'curl -o tmp/latest.backup "$(production pg:backups public-url -q)"'
+  end
+
+  def dockerized_restore_from_local_temp_backup_command
+    "docker-compose exec db "\
+     "pg_restore -U postgres tmp/latest.backup --verbose --clean --no-acl --no-owner "\
+      "-d #{default_db_name} "
   end
 
   def restore_from_local_temp_backup_command
