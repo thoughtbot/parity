@@ -22,8 +22,8 @@ describe Parity::Backup do
   end
 
   it "restores backups to dockerized development (after dropping the development DB)" do
-    allow(IO).to receive(:read).and_return(database_fixture)
-    allow(File).to receive(:exists?).and_return(docker_compose_fixture)
+    allow(IO).to receive(:read).and_return(docker_compose_fixture, database_fixture)
+    allow(File).to receive(:exists?).and_return(docker_compose_fixture_exists?)
     allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: "production", to: "development").restore
@@ -84,6 +84,10 @@ describe Parity::Backup do
   end
 
   def docker_compose_fixture
+    IO.read(fixture_path("docker-compose.yml"))
+  end
+
+  def docker_compose_fixture_exists?
     File.exists?(fixture_path("docker-compose.yml"))
   end
 

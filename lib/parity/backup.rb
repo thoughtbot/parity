@@ -1,6 +1,7 @@
 module Parity
   class Backup
     BLANK_ARGUMENTS = "".freeze
+    DOCKER_COMPOSE_YML_RELATIVE_PATH = "docker-compose.yml".freeze
     DATABASE_YML_RELATIVE_PATH = "config/database.yml".freeze
     DEVELOPMENT_ENVIRONMENT_KEY_NAME = "development".freeze
     DATABASE_KEY_NAME = "database".freeze
@@ -102,7 +103,22 @@ module Parity
     end
 
     def dockerized_app?
-      File.exists?("docker-compose.yml")
+      return @_dockerized_app if defined?(@_dockerized_app)
+      @_dockerized_app = docker_compose_file_present? && docker_compose_has_db_service?
+    end
+
+    def docker_compose_file_present?
+      File.exists?(DOCKER_COMPOSE_YML_RELATIVE_PATH)
+    end
+
+    def docker_compose_has_db_service?
+      YAML.load(docker_compose_yaml_file)
+        .fetch("services")
+        .key?("db")
+    end
+
+    def docker_compose_yaml_file
+      IO.read(DOCKER_COMPOSE_YML_RELATIVE_PATH)
     end
   end
 end
