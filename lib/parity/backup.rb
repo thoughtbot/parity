@@ -1,3 +1,5 @@
+require "etc"
+
 module Parity
   class Backup
     BLANK_ARGUMENTS = "".freeze
@@ -53,7 +55,8 @@ module Parity
     def restore_from_local_temp_backup
       Kernel.system(
         "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
-          "-d #{development_db} #{additional_args}",
+          "--dbname #{development_db} --jobs #{Etc.nprocessors} "\
+          "#{additional_args}",
       )
     end
 

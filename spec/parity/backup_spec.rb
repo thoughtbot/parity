@@ -4,6 +4,7 @@ describe Parity::Backup do
   it "restores backups to development (after dropping the development DB)" do
     allow(IO).to receive(:read).and_return(database_fixture)
     allow(Kernel).to receive(:system)
+    allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
 
     Parity::Backup.new(from: "production", to: "development").restore
 
@@ -77,7 +78,11 @@ describe Parity::Backup do
 
   def restore_from_local_temp_backup_command
     "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
-      "-d #{default_db_name} "
+      "--dbname #{default_db_name} --jobs #{number_of_processes} "
+  end
+
+  def number_of_processes
+    2
   end
 
   def delete_local_temp_backup_command
