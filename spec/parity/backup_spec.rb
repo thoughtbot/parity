@@ -73,7 +73,7 @@ describe Parity::Backup do
   end
 
   def download_remote_database_command
-    'curl -o tmp/latest.backup "$(production pg:backups public-url -q)"'
+    'curl -o tmp/latest.backup "$(heroku pg:backups:url --remote production)"'
   end
 
   def restore_from_local_temp_backup_command
@@ -94,12 +94,12 @@ describe Parity::Backup do
   end
 
   def heroku_production_to_staging_passthrough
-    "heroku pg:backups restore `heroku pg:backups public-url "\
+    "heroku pg:backups:restore `heroku pg:backups:url "\
       "--remote production` DATABASE --remote staging "
   end
 
   def additional_argument_pass_through
-    "heroku pg:backups restore `heroku pg:backups public-url "\
+    "heroku pg:backups:restore `heroku pg:backups:url "\
       "--remote production` DATABASE --remote staging "\
       "--confirm thisismyapp-staging"
   end
