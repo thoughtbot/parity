@@ -35,7 +35,7 @@ module Parity
     end
 
     def backup
-      Kernel.system("heroku pg:backups capture --remote #{environment}")
+      Kernel.system("heroku pg:backups:capture --remote #{environment}")
     end
 
     def deploy
@@ -161,7 +161,7 @@ module Parity
         git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
       })
     end
-    
+
     def compare_with
       if production?
         "master"

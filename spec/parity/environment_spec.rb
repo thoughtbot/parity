@@ -304,7 +304,7 @@ RSpec.describe Parity::Environment do
   end
 
   def heroku_backup
-    "heroku pg:backups capture --remote production"
+    "heroku pg:backups:capture --remote production"
   end
 
   def heroku_console
