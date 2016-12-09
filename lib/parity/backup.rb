@@ -48,7 +48,7 @@ module Parity
 
     def download_remote_backup
       Kernel.system(
-        "curl -o tmp/latest.backup \"$(#{from} pg:backups public-url -q)\"",
+        "curl -o tmp/latest.backup \"$(heroku pg:backups:url -- remote #{from})\"",
       )
     end
 
@@ -63,7 +63,7 @@ module Parity
     def delete_local_temp_backup
       Kernel.system("rm tmp/latest.backup")
     end
-
+rake
     def restore_to_remote_environment
       Kernel.system(
         "heroku pg:backups restore #{backup_from} --remote #{to} "\
