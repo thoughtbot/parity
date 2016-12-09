@@ -30,7 +30,7 @@ module Parity
     def restore_from_development
       if dockerized_app?
         $stdout.puts "Parity does not support restoring backups from a dockerized development"
-      else 
+      else
         Kernel.system(
           "heroku pg:push #{development_db} DATABASE_URL --remote #{to} "\
             "#{additional_args}",
@@ -56,7 +56,7 @@ module Parity
 
     def download_remote_backup
       Kernel.system(
-        "curl -o tmp/latest.backup \"$(#{from} pg:backups public-url -q)\"",
+        "curl -o tmp/latest.backup \"$(heroku pg:backups:url --remote #{from})\"",
       )
     end
 
@@ -79,7 +79,7 @@ module Parity
 
     def restore_to_remote_environment
       Kernel.system(
-        "heroku pg:backups restore #{backup_from} --remote #{to} "\
+        "heroku pg:backups:restore #{backup_from} --remote #{to} "\
           "#{additional_args}",
       )
     end
@@ -89,7 +89,7 @@ module Parity
     end
 
     def remote_db_backup_url
-      "heroku pg:backups public-url --remote #{from}"
+      "heroku pg:backups:url --remote #{from}"
     end
 
     def development_db
