@@ -48,7 +48,7 @@ module Parity
 
     def download_remote_backup
       Kernel.system(
-        "curl -o tmp/latest.backup \"$(#{from} pg:backups public-url -q)\"",
+        "curl -o tmp/latest.backup \"$(#{from} pg:backups:public-url -q)\"",
       )
     end
 
