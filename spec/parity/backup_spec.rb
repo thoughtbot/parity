@@ -73,7 +73,7 @@ describe Parity::Backup do
   end
 
   def download_remote_database_command
-    'curl -o tmp/latest.backup "$(production pg:backups public-url -q)"'
+    'curl -o tmp/latest.backup "$(production pg:backups:public-url -q)"'
   end
 
   def restore_from_local_temp_backup_command
