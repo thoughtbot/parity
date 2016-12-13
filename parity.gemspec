@@ -17,6 +17,4 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.2.0"
   spec.summary = "Shell commands for development, staging, and production parity."
   spec.version = Parity::VERSION
-
-  spec.post_install_message = File.read("UPGRADING")
 end
