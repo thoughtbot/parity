@@ -7,7 +7,7 @@ RSpec::Core::RakeTask.new('spec')
 task default: :spec
 
 PROJECT_NAME = "parity"
-TRAVELING_RUBY_VERSION = "20150517-2.2.2"
+TRAVELING_RUBY_VERSION = "20150715-2.2.2"
 TRAVELING_RUBY_HOST = "http://d6r77u77i8pq3.cloudfront.net/releases"
 RUBY_BASENAME = "traveling-ruby-#{TRAVELING_RUBY_VERSION}"
 
@@ -59,8 +59,6 @@ def create_package(target)
   package_dir = "#{PROJECT_NAME}-#{Parity::VERSION}-#{target}"
 
   copy_lib(package_dir)
-  copy_vendored_gems(package_dir)
-  copy_bundler_config(package_dir)
   copy_binaries(package_dir)
   copy_shims(package_dir)
   extract_ruby(package_dir, target)
@@ -83,24 +81,6 @@ def copy_lib(package_dir)
 
   cp_r "lib", app_dir
   cp "README.md", app_dir
-end
-
-def copy_bundler_config(package_dir)
-  vendor_path = "#{package_dir}/lib/vendor"
-  bundle_path = "#{vendor_path}/.bundle"
-  mkdir_p bundle_path
-
-  cp "Gemfile", vendor_path
-  cp "Gemfile.lock", vendor_path
-  chmod "+w", "#{vendor_path}/Gemfile.lock"
-  cp "packaging/bundler-config", "#{bundle_path}/config"
-end
-
-def copy_vendored_gems(package_dir)
-  lib_path = "#{package_dir}/lib"
-  mkdir_p lib_path
-
-  cp_r "packaging/vendor", lib_path
 end
 
 def copy_binaries(package_dir)
