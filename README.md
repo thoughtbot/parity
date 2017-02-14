@@ -150,7 +150,7 @@ See guidelines in [`RELEASING.md`](RELEASING.md) for details
 License
 -------
 
-Parity is © 2013-2016 thoughtbot, inc.
+Parity is © 2013-2017 thoughtbot, inc.
 It is free software,
 and may be redistributed under the terms specified in the [LICENSE] file.
 
