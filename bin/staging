@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'parity')
+$LOAD_PATH.unshift File.expand_path(File.join("..", "..", "lib"), __FILE__)
+require "parity"
 
 if ARGV.empty?
   puts Parity::Usage.new
