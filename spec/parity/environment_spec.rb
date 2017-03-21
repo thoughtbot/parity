@@ -142,7 +142,7 @@ RSpec.describe Parity::Environment do
     Parity::Environment.new("production", ["restore", "staging", "--force"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: "staging", to: "production", additional_args: "--force")
+      with(from: "staging", to: "production", additional_args: "")
     expect(backup).to have_received(:restore)
   end
 
