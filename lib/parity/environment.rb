@@ -80,7 +80,7 @@ module Parity
     end
 
     def additional_restore_arguments
-      (arguments.drop(1) + [restore_confirmation_argument]).
+      (arguments.drop(1) - ["--force"] + [restore_confirmation_argument]).
         compact.
         join(" ")
     end
