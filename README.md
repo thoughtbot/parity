@@ -11,6 +11,13 @@ On OS X, this installs everything you need:
     brew tap thoughtbot/formulae
     brew install parity
 
+On Debian:
+
+    wget -qO - https://apt.thoughtbot.com/thoughtbot.gpg.key | sudo apt-key add -
+    echo "deb http://apt.thoughtbot.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/thoughtbot.list
+    sudo apt-get update
+    sudo apt-get install parity
+
 On other systems you can:
 
 1. Download the package for your system from the [releases page][releases]
