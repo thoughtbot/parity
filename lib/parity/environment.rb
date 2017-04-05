@@ -161,6 +161,14 @@ module Parity
         git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
       })
     end
+    
+    def compare_with
+      if production?
+        "master"
+      else
+        "HEAD"
+      end
+    end
 
     def compare_with
       if production?
