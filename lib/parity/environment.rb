@@ -86,9 +86,13 @@ module Parity
     end
 
     def restore_confirmation_argument
-      unless PROTECTED_ENVIRONMENTS.include?(environment)
+      unless PROTECTED_ENVIRONMENTS.include?(environment) || from_development?
         "--confirm #{heroku_app_name}"
       end
+    end
+
+    def from_development?
+      arguments.first == "development"
     end
 
     def console
@@ -129,10 +133,7 @@ module Parity
     end
 
     def heroku_app_name
-      @heroku_app_name ||= Open3.
-        capture3(command_for_remote("info"))[0].
-        split("\n")[0].
-        gsub(/(\s|=)+/, "")
+      HerokuAppName.new(environment).to_s
     end
 
     def command_for_remote(command)

@@ -382,16 +382,14 @@ RSpec.describe Parity::Environment do
   end
 
   def stub_git_remote(base_name: "parity", environment: "staging")
-    allow(Open3).
-      to receive(:capture3).
-      with("heroku info --remote #{environment}").
-      and_return(
-        [
-          "=== #{base_name}-#{environment}\nAddOns: blahblahblah",
-          "",
-          {},
-        ],
-      )
+    heroku_app_name = instance_double(
+      Parity::HerokuAppName,
+      to_s: "#{base_name}-#{environment}",
+    )
+    allow(Parity::HerokuAppName).
+      to receive(:new).
+      with(environment).
+      and_return(heroku_app_name)
   end
 
   def stub_parity_backup

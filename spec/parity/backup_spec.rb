@@ -23,16 +23,21 @@ describe Parity::Backup do
   end
 
   it "restores backups to staging from production" do
+    stub_heroku_app_name
     allow(Kernel).to receive(:system)
 
     Parity::Backup.new(from: "production", to: "staging").restore
 
     expect(Kernel).
       to have_received(:system).
+      with(heroku_staging_pg_reset)
+    expect(Kernel).
+      to have_received(:system).
       with(heroku_production_to_staging_passthrough)
   end
 
   it "restores backups to staging from development" do
+    stub_heroku_app_name
     allow(IO).to receive(:read).and_return(database_fixture)
     allow(Kernel).to receive(:system)
 
@@ -40,10 +45,14 @@ describe Parity::Backup do
 
     expect(Kernel).
       to have_received(:system).
+      with(heroku_staging_pg_reset)
+    expect(Kernel).
+      to have_received(:system).
       with(heroku_development_to_staging_passthrough)
   end
 
   it "passes additional arguments to the subcommand" do
+    stub_heroku_app_name
     allow(Kernel).to receive(:system)
 
     Parity::Backup.new(
@@ -54,6 +63,15 @@ describe Parity::Backup do
 
     expect(Kernel).
       to have_received(:system).with(additional_argument_pass_through)
+  end
+
+  def stub_heroku_app_name
+    heroku_app_name =
+      instance_double(Parity::HerokuAppName, to_s: "parity-staging")
+    allow(Parity::HerokuAppName).
+      to receive(:new).
+      with("staging").
+      and_return(heroku_app_name)
   end
 
   def database_fixture
@@ -89,6 +107,10 @@ describe Parity::Backup do
     "rm tmp/latest.backup"
   end
 
+  def heroku_staging_app_info_command
+    "heroku info --remote staging"
+  end
+
   def heroku_development_to_staging_passthrough(db_name: default_db_name)
     "heroku pg:push #{db_name} DATABASE_URL --remote staging "
   end
@@ -96,6 +118,10 @@ describe Parity::Backup do
   def heroku_production_to_staging_passthrough
     "heroku pg:backups:restore `heroku pg:backups:url "\
       "--remote production` DATABASE --remote staging "
+  end
+
+  def heroku_staging_pg_reset(basename: "parity")
+    "heroku pg:reset --remote staging  --confirm #{basename}-staging"
   end
 
   def additional_argument_pass_through

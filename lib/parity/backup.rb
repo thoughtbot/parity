@@ -22,13 +22,12 @@ module Parity
       end
     end
 
-    protected
+    private
 
     attr_reader :additional_args, :from, :to
 
-    private
-
     def restore_from_development
+      reset_remote_database
       Kernel.system(
         "heroku pg:push #{development_db} DATABASE_URL --remote #{to} "\
           "#{additional_args}",
@@ -44,6 +43,17 @@ module Parity
 
     def wipe_development_database
       Kernel.system("dropdb #{development_db} && createdb #{development_db}")
+    end
+
+    def reset_remote_database
+      Kernel.system(
+        "heroku pg:reset --remote #{to} #{additional_args} "\
+          "--confirm #{heroku_app_name}",
+      )
+    end
+
+    def heroku_app_name
+      HerokuAppName.new(to).to_s
     end
 
     def download_remote_backup
@@ -65,6 +75,7 @@ module Parity
     end
 
     def restore_to_remote_environment
+      reset_remote_database
       Kernel.system(
         "heroku pg:backups:restore #{backup_from} --remote #{to} "\
           "#{additional_args}",
