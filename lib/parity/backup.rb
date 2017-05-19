@@ -35,6 +35,7 @@ module Parity
     end
 
     def restore_to_development
+      ensure_temp_directory_exists
       download_remote_backup
       wipe_development_database
       restore_from_local_temp_backup
@@ -54,6 +55,10 @@ module Parity
 
     def heroku_app_name
       HerokuAppName.new(to).to_s
+    end
+
+    def ensure_temp_directory_exists
+      Kernel.system("mkdir -p tmp")
     end
 
     def download_remote_backup

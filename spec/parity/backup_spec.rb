@@ -10,6 +10,9 @@ describe Parity::Backup do
 
     expect(Kernel).
       to have_received(:system).
+      with(make_temp_directory_command)
+    expect(Kernel).
+      to have_received(:system).
       with(download_remote_database_command)
     expect(Kernel).
       to have_received(:system).
@@ -88,6 +91,10 @@ describe Parity::Backup do
 
   def drop_development_database_drop_command(db_name: default_db_name)
     "dropdb #{db_name} && createdb #{db_name}"
+  end
+
+  def make_temp_directory_command
+    "mkdir -p tmp"
   end
 
   def download_remote_database_command
