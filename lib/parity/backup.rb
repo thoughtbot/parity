@@ -43,7 +43,9 @@ module Parity
     end
 
     def wipe_development_database
-      Kernel.system("dropdb #{development_db} && createdb #{development_db}")
+      Kernel.system(
+        "dropdb --if-exists #{development_db} && createdb #{development_db}",
+      )
     end
 
     def reset_remote_database

@@ -90,7 +90,7 @@ describe Parity::Backup do
   end
 
   def drop_development_database_drop_command(db_name: default_db_name)
-    "dropdb #{db_name} && createdb #{db_name}"
+    "dropdb --if-exists #{db_name} && createdb #{db_name}"
   end
 
   def make_temp_directory_command
