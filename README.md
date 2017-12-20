@@ -144,6 +144,11 @@ else
 end
 ```
 
+Issues
+------
+Please fill out our [issues template](.github/issue_template.md) if you are
+having problems.
+
 Contributing
 ------------
 
