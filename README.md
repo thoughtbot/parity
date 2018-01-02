@@ -111,7 +111,6 @@ heroku git:remote -r production -a your-production-app
 * There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
 
-
 Customization
 -------------
 
@@ -153,6 +152,13 @@ Contributing
 ------------
 
 Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
+
+Version History
+---------------
+
+Please see the [releases page](https://github.com/thoughtbot/parity/releases)
+for the version history, along with a description of the changes in each
+release.
 
 Releasing
 ---------
