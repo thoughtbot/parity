@@ -25,6 +25,30 @@ describe Parity::Backup do
       with(delete_local_temp_backup_command)
   end
 
+  it "restores backups to development with Rubies that do not support Etc.nprocessors" do
+    allow(IO).to receive(:read).and_return(database_fixture)
+    allow(Kernel).to receive(:system)
+    allow(Etc).to receive(:respond_to?).with(:nprocessors).and_return(false)
+
+    Parity::Backup.new(from: "production", to: "development").restore
+
+    expect(Kernel).
+      to have_received(:system).
+      with(make_temp_directory_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(download_remote_database_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(drop_development_database_drop_command)
+    expect(Kernel).
+      to have_received(:system).
+      with(restore_from_local_temp_backup_command(cores: 2))
+    expect(Kernel).
+      to have_received(:system).
+      with(delete_local_temp_backup_command)
+  end
+
   it "restores backups to staging from production" do
     stub_heroku_app_name
     allow(Kernel).to receive(:system)
@@ -101,9 +125,9 @@ describe Parity::Backup do
     'curl -o tmp/latest.backup "$(heroku pg:backups:url --remote production)"'
   end
 
-  def restore_from_local_temp_backup_command
+  def restore_from_local_temp_backup_command(cores: number_of_processes)
     "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
-      "--dbname #{default_db_name} --jobs #{number_of_processes} "
+      "--dbname #{default_db_name} --jobs #{cores} "
   end
 
   def number_of_processes

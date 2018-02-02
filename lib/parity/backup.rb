@@ -72,7 +72,7 @@ module Parity
     def restore_from_local_temp_backup
       Kernel.system(
         "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
-          "--dbname #{development_db} --jobs #{Etc.nprocessors} "\
+          "--dbname #{development_db} --jobs #{processor_cores} "\
           "#{additional_args}",
       )
     end
@@ -105,6 +105,18 @@ module Parity
 
     def database_yaml_file
       IO.read(DATABASE_YML_RELATIVE_PATH)
+    end
+
+    def processor_cores
+      if ruby_version_over_2_2?
+        Etc.nprocessors
+      else
+        2
+      end
+    end
+
+    def ruby_version_over_2_2?
+      Etc.respond_to?(:nprocessors)
     end
   end
 end
