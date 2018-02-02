@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
     those who write the code to deploy the code.
   eos
 
-  spec.email = ["geoff@thoughtbot.com"]
+  spec.email = ["ralph@thoughtbot.com"]
   spec.executables = ["development", "staging", "production"]
   spec.files = `git ls-files -- lib/* README.md`.split("\n")
   spec.homepage = "https://github.com/thoughtbot/parity"
