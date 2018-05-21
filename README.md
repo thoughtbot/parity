@@ -53,6 +53,8 @@ Or, if `restore-from` reads better to you, it's the same thing:
     development restore-from production
     development restore-from staging
 
+ * Note that the `restore` command will use the most recent backup (from _staging_ or _production_). You may first need to create a more recent backup before restoring, to prevent download of a very old backup.
+
 Push your local development database backup up to staging:
 
     staging restore development
