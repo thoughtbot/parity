@@ -113,17 +113,7 @@ module Parity
     end
 
     def redis_cli
-      url = URI(raw_redis_url)
-
-      Kernel.system(
-        "redis-cli",
-        "-h",
-        url.host,
-        "-p",
-        url.port.to_s,
-        "-a",
-        url.password
-      )
+      Kernel.system("redis-cli", "-u", raw_redis_url)
     end
 
     def raw_redis_url

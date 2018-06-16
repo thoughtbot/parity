@@ -177,12 +177,8 @@ RSpec.describe Parity::Environment do
 
     expect(Kernel).to have_received(:system).with(
       "redis-cli",
-      "-h",
-      "landshark.redistogo.com",
-      "-p",
-      "90210",
-      "-a",
-      "abcd1234efgh5678"
+      "-u",
+      open3_redis_url_fetch_result[0].strip,
     )
     expect(Open3).
       to have_received(:capture3).
