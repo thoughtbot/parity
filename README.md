@@ -75,21 +75,25 @@ Open a console:
 
     production console
     staging console
+    pr_app 1234 console
 
 Migrate a database and restart the dynos:
 
     production migrate
     staging migrate
+    pr_app 1234 migrate
 
 Tail a log:
 
     production tail
     staging tail
+    pr_app 1234 tail
 
 Use [redis-cli][2] with your `REDIS_URL` add-on:
 
     production redis-cli
     staging redis-cli
+    pr_app 1234 redis-cli
 
 The scripts also pass through, so you can do anything with them that you can do
 with `heroku ______ --remote staging` or `heroku ______ --remote production`:
@@ -112,6 +116,20 @@ heroku git:remote -r production -a your-production-app
 ```
 * There is a `config/database.yml` file that can be parsed as YAML for
   `['development']['database']`.
+
+Pipelines
+---------
+
+If you deploy review applications with Heroku pipelines, run commands against
+those applications with the `pr_app` command, followed by the PR number for your
+application:
+
+```
+pr_app 1234 console
+```
+
+This command assumes that your review applications have a name derived from the
+name of the application your `staging` Git remote points at.
 
 Customization
 -------------
