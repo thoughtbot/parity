@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.join("..", "..", "lib"), __FILE__)
+require "open3"
+require "parity"
+
+if ARGV.empty?
+  puts Parity::Usage.new
+else
+  review_app_number = ARGV.first
+  staging_git_remote = Open3.capture3("git remote get-url staging")[0].strip
+  review_app_prefix = staging_git_remote.split("/").last.gsub(/\.git\Z/, "")
+
+  exit Parity::Environment.new(
+    "#{review_app_prefix}-#{review_app_number}",
+    ARGV.drop(1),
+    switch: "--app",
+  ).run
+end

@@ -15,6 +15,16 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:exec).with(*psql_count)
   end
 
+  it "allows connection to applications by app name rather than Git remote" do
+    Parity::Environment.new(
+      "my-pipeline-pr-1234",
+      ["tail", "--ps", "web"],
+      app_argument: "--app",
+    ).run
+
+    expect(Kernel).to have_received(:system).with(tail_pr_app)
+  end
+
   it "returns `false` when a system command fails" do
     allow(Kernel).to receive(:exec).with(*psql_count).and_return(nil)
 
@@ -335,6 +345,10 @@ RSpec.describe Parity::Environment do
 
   def tail
     "heroku logs --tail --ps web --remote production"
+  end
+
+  def tail_pr_app
+    "heroku logs --tail --ps web --app my-pipeline-pr-1234"
   end
 
   def open

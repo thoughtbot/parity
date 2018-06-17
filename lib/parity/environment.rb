@@ -2,10 +2,11 @@ require "parity/backup"
 
 module Parity
   class Environment
-    def initialize(environment, subcommands)
+    def initialize(environment, subcommands, app_argument: "--remote")
       self.environment = environment
       self.subcommand = subcommands[0]
       self.arguments = subcommands[1..-1]
+      self.app_argument = app_argument
     end
 
     def run
@@ -16,7 +17,7 @@ module Parity
 
     PROTECTED_ENVIRONMENTS = %w(development production)
 
-    attr_accessor :environment, :subcommand, :arguments
+    attr_accessor :app_argument, :environment, :subcommand, :arguments
 
     def run_command
       if self.class.private_method_defined?(methodized_subcommand)
@@ -31,11 +32,11 @@ module Parity
     end
 
     def run_via_cli
-      Kernel.exec("heroku", subcommand, *arguments, "--remote", environment)
+      Kernel.exec("heroku", subcommand, *arguments, app_argument, environment)
     end
 
     def backup
-      Kernel.system("heroku pg:backups:capture --remote #{environment}")
+      Kernel.system("heroku pg:backups:capture #{app_argument} #{environment}")
     end
 
     def deploy
@@ -137,7 +138,7 @@ module Parity
     end
 
     def command_for_remote(command)
-      "heroku #{command} --remote #{environment}"
+      "heroku #{command} #{app_argument} #{environment}"
     end
 
     def run_migrations?
