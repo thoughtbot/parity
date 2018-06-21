@@ -6,7 +6,7 @@ Shell commands for development, staging, and production parity for Heroku apps.
 Install
 -------
 
-On OS X, this installs everything you need:
+On macOS, this installs everything you need:
 
     brew tap thoughtbot/formulae
     brew install parity
@@ -31,7 +31,7 @@ Parity requires these command-line programs:
     heroku
     pg_restore
 
-On OS X, these programs are installed
+On macOS, these programs are installed
 as Homebrew package dependencies of
 the `parity` Homebrew package.
 
