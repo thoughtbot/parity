@@ -1,52 +1,79 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'parity')
 
 describe Parity::Backup do
-  it "restores backups to development (after dropping the development DB)" do
-    allow(IO).to receive(:read).and_return(database_fixture)
-    allow(Kernel).to receive(:system)
-    allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
+  context "restoring to the local development environment" do
+    it "restores backups to development (after dropping the development DB)" do
+      allow(IO).to receive(:read).and_return(database_fixture)
+      allow(Kernel).to receive(:system)
+      allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
 
-    Parity::Backup.new(from: "production", to: "development").restore
+      Parity::Backup.new(from: "production", to: "development").restore
 
-    expect(Kernel).
-      to have_received(:system).
-      with(make_temp_directory_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(download_remote_database_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(drop_development_database_drop_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(restore_from_local_temp_backup_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(delete_local_temp_backup_command)
-  end
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
 
-  it "restores backups to development with Rubies that do not support Etc.nprocessors" do
-    allow(IO).to receive(:read).and_return(database_fixture)
-    allow(Kernel).to receive(:system)
-    allow(Etc).to receive(:respond_to?).with(:nprocessors).and_return(false)
+    it "restores backups to development with Rubies that do not support Etc.nprocessors" do
+      allow(IO).to receive(:read).and_return(database_fixture)
+      allow(Kernel).to receive(:system)
+      allow(Etc).to receive(:respond_to?).with(:nprocessors).and_return(false)
 
-    Parity::Backup.new(from: "production", to: "development").restore
+      Parity::Backup.new(from: "production", to: "development").restore
 
-    expect(Kernel).
-      to have_received(:system).
-      with(make_temp_directory_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(download_remote_database_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(drop_development_database_drop_command)
-    expect(Kernel).
-      to have_received(:system).
-      with(restore_from_local_temp_backup_command(cores: 2))
-    expect(Kernel).
-      to have_received(:system).
-      with(delete_local_temp_backup_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command(cores: 2))
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
+
+    it "drops the 'ar_internal_metadata' table if it exists" do
+      allow(IO).to receive(:read).and_return(database_fixture)
+      allow(Kernel).to receive(:system)
+      allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
+
+      Parity::Backup.new(from: "production", to: "development").restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+      expect(Kernel).to have_received(:system).with(drop_ar_metadata_psql)
+    end
   end
 
   it "restores backups to staging from production" do
@@ -163,5 +190,9 @@ describe Parity::Backup do
 
   def default_db_name
     "parity_development"
+  end
+
+  def drop_ar_metadata_psql
+    %q{psql parity_development -c "DROP TABLE IF EXISTS ar_internal_metadata;"}
   end
 end

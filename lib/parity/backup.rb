@@ -40,6 +40,7 @@ module Parity
       wipe_development_database
       restore_from_local_temp_backup
       delete_local_temp_backup
+      delete_rails_production_environment_settings
     end
 
     def wipe_development_database
@@ -79,6 +80,13 @@ module Parity
 
     def delete_local_temp_backup
       Kernel.system("rm tmp/latest.backup")
+    end
+
+    def delete_rails_production_environment_settings
+      Kernel.system(
+        "psql #{development_db} -c "\
+          '"DROP TABLE IF EXISTS ar_internal_metadata;"',
+      )
     end
 
     def restore_to_remote_environment
