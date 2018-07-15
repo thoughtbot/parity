@@ -40,14 +40,6 @@ module Parity
     end
 
     def deploy
-      skip_migrations = !run_migrations?
-
-      if deploy_to_heroku
-        skip_migrations || migrate
-      end
-    end
-
-    def deploy_to_heroku
       if production?
         Kernel.system("git push production master")
       else
@@ -129,29 +121,6 @@ module Parity
 
     def command_for_remote(command)
       "heroku #{command} #{app_argument} #{environment}"
-    end
-
-    def run_migrations?
-      rails_app? && pending_migrations?
-    end
-
-    def rails_app?
-      has_rakefile? && has_migrations_folder?
-    end
-
-    def has_migrations_folder?
-      Pathname.new("db").join("migrate").directory?
-    end
-
-    def has_rakefile?
-      File.exists?("Rakefile")
-    end
-
-    def pending_migrations?
-      !Kernel.system(%{
-        git fetch #{environment} &&
-        git diff --quiet #{environment}/master..#{compare_with} -- db/migrate
-      })
     end
 
     def compare_with

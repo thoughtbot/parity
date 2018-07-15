@@ -59,13 +59,11 @@ Push your local development database backup up to staging:
 
     staging restore development
 
-Deploy from master to production
-and migrate and restart the dynos if necessary:
+Deploy master to production:
 
     production deploy
 
-Deploy the current branch to staging or a feature branch
-and migrate and restart the dynos if necessary:
+Deploy the current branch to staging:
 
     staging deploy
 
