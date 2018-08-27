@@ -127,7 +127,7 @@ describe Parity::Backup do
 
   def restore_from_local_temp_backup_command(cores: number_of_processes)
     "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
-      "--dbname #{default_db_name} --jobs #{cores} "
+      "--dbname #{default_db_name} --jobs=#{cores} "
   end
 
   def number_of_processes
