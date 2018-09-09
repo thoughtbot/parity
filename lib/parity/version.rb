@@ -1,3 +1,3 @@
 module Parity
-  VERSION = "2.4.0".freeze
+  VERSION = "3.0.0.beta".freeze
 end
