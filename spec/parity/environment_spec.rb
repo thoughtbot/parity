@@ -251,10 +251,6 @@ RSpec.describe Parity::Environment do
     ["heroku", "open", "--remote", "production"]
   end
 
-  def redis_cli
-    "redis-cli -h landshark.redistogo.com -p 90210 -a abcd1234efgh5678"
-  end
-
   def fetch_redis_url(env_variable)
     "heroku config:get #{env_variable} --remote production"
   end
@@ -273,22 +269,6 @@ RSpec.describe Parity::Environment do
       "-c", "select count(*) from users;",
       "--remote", "production"
     ]
-  end
-
-  def stub_is_a_rails_app
-    stub_rakefile_check(true)
-    stub_migration_path_check(true)
-  end
-
-  def stub_rakefile_check(result)
-    allow(File).to receive(:exists?).with("Rakefile").and_return(result)
-  end
-
-  def stub_migration_path_check(result)
-    path_stub = spy("Pathname", directory?: result)
-    allow(Pathname).to receive(:new).with("db").and_return(path_stub)
-
-    path_stub
   end
 
   def stub_git_remote(base_name: "parity", environment: "staging")

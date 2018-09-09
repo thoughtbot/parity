@@ -105,10 +105,6 @@ describe Parity::Backup do
     IO.read(fixture_path("database.yml"))
   end
 
-  def database_with_erb_fixture
-    IO.read(fixture_path("database_with_erb.yml"))
-  end
-
   def fixture_path(filename)
     File.join(File.dirname(__FILE__), "..", "fixtures", filename)
   end
@@ -136,10 +132,6 @@ describe Parity::Backup do
 
   def delete_local_temp_backup_command
     "rm tmp/latest.backup"
-  end
-
-  def heroku_staging_app_info_command
-    "heroku info --remote staging"
   end
 
   def heroku_development_to_staging_passthrough(db_name: default_db_name)

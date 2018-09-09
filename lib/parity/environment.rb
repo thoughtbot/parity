@@ -123,14 +123,6 @@ module Parity
       "heroku #{command} #{app_argument} #{environment}"
     end
 
-    def compare_with
-      if production?
-        "master"
-      else
-        "HEAD"
-      end
-    end
-
     def methodized_subcommand
       subcommand.gsub("-", "_").to_sym
     end
