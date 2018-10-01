@@ -185,11 +185,8 @@ describe Parity::Backup do
   end
 
   def set_db_metadata_sql
-    "psql parity_development -c "\
-      "\"DO $$ BEGIN IF EXISTS "\
-      "(SELECT 1 FROM pg_tables WHERE tablename = 'ar_internal_metadata') "\
-      "THEN UPDATE ar_internal_metadata "\
-      "SET value = 'development' "\
-      "WHERE key = 'environment'; ELSE END IF; END $$;\""
+    <<-SHELL
+        psql parity_development -c "CREATE TABLE IF NOT EXISTS public.ar_internal_metadata (key character varying NOT NULL, value character varying, created_at timestamp without time zone NOT NULL, updated_at timestamp without time zone NOT NULL, CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key)); UPDATE ar_internal_metadata SET value = 'development' WHERE key = 'environment'"
+    SHELL
   end
 end
