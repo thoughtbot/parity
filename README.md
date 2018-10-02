@@ -59,9 +59,12 @@ Push your local development database backup up to staging:
 
     staging restore development
 
-Deploy master to production:
+Deploy master to production (note that prior versions of Parity would run
+database migrations, that's now better handled using [Heroku release phase]):
 
     production deploy
+
+[Heroku release phase]: https://devcenter.heroku.com/articles/release-phase
 
 Deploy the current branch to staging:
 
