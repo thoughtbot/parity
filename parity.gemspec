@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   eos
 
   spec.email = ["ralph@thoughtbot.com"]
-  spec.executables = ["development", "staging", "production"]
+  spec.executables = ["development", "staging", "production", "pr_app"]
   spec.files = `git ls-files -- lib/* README.md`.split("\n")
   spec.homepage = "https://github.com/thoughtbot/parity"
   spec.license = "MIT"

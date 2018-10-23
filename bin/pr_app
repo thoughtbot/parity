@@ -12,8 +12,8 @@ else
   review_app_prefix = staging_git_remote.split("/").last.gsub(/\.git\Z/, "")
 
   exit Parity::Environment.new(
-    "#{review_app_prefix}-#{review_app_number}",
+    "#{review_app_prefix}-pr-#{review_app_number}",
     ARGV.drop(1),
-    switch: "--app",
+    app_argument: "--app",
   ).run
 end
