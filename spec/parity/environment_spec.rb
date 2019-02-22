@@ -221,7 +221,7 @@ RSpec.describe Parity::Environment do
   end
 
   def heroku_console
-    "heroku run rails console --remote production"
+    "heroku run bundle exec rails console --remote production"
   end
 
   def git_push

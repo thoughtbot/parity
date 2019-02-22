@@ -89,7 +89,7 @@ module Parity
     end
 
     def console
-      Kernel.system(command_for_remote("run rails console"))
+      Kernel.system(command_for_remote("run bundle exec rails console"))
     end
 
     def migrate
