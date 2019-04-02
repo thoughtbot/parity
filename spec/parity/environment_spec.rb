@@ -162,6 +162,12 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(heroku_console)
   end
 
+  it "passes arguments to the console subcommand" do
+    Parity::Environment.new("production", ["console", "--sandbox"]).run
+
+    expect(Kernel).to have_received(:system).with(heroku_console_with_sandbox)
+  end
+
   it "automatically restarts processes when it migrates the database" do
     Parity::Environment.new("production", ["migrate"]).run
 
@@ -221,7 +227,11 @@ RSpec.describe Parity::Environment do
   end
 
   def heroku_console
-    "heroku run bundle exec rails console --remote production"
+    "heroku run bundle exec rails console  --remote production"
+  end
+
+  def heroku_console_with_sandbox
+    "heroku run bundle exec rails console --sandbox --remote production"
   end
 
   def git_push
