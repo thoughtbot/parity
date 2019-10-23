@@ -10,6 +10,7 @@ module Parity
     def initialize(args)
       @from, @to = args.values_at(:from, :to)
       @additional_args = args[:additional_args] || BLANK_ARGUMENTS
+      @psql_args = args[:psql_args] || BLANK_ARGUMENTS
     end
 
     def restore
@@ -24,7 +25,7 @@ module Parity
 
     private
 
-    attr_reader :additional_args, :from, :to
+    attr_reader :additional_args, :psql_args, :from, :to
 
     def restore_from_development
       reset_remote_database
@@ -45,7 +46,8 @@ module Parity
 
     def wipe_development_database
       Kernel.system(
-        "dropdb --if-exists #{development_db} && createdb #{development_db}",
+        "dropdb #{psql_args} --if-exists #{development_db} && "\
+        "createdb #{psql_args} #{development_db}",
       )
     end
 
@@ -74,7 +76,7 @@ module Parity
       Kernel.system(
         "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
           "--dbname #{development_db} --jobs=#{processor_cores} "\
-          "#{additional_args}",
+          "#{additional_args} #{psql_args}",
       )
     end
 
@@ -84,7 +86,7 @@ module Parity
 
     def delete_rails_production_environment_settings
       Kernel.system(<<-SHELL)
-        psql #{development_db} -c "CREATE TABLE IF NOT EXISTS public.ar_internal_metadata (key character varying NOT NULL, value character varying, created_at timestamp without time zone NOT NULL, updated_at timestamp without time zone NOT NULL, CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key)); UPDATE ar_internal_metadata SET value = 'development' WHERE key = 'environment'"
+        psql #{psql_args} #{development_db} -c "CREATE TABLE IF NOT EXISTS public.ar_internal_metadata (key character varying NOT NULL, value character varying, created_at timestamp without time zone NOT NULL, updated_at timestamp without time zone NOT NULL, CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key)); UPDATE ar_internal_metadata SET value = 'development' WHERE key = 'environment'"
       SHELL
     end
 
