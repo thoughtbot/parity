@@ -10,6 +10,7 @@ module Parity
     def initialize(args)
       @from, @to = args.values_at(:from, :to)
       @additional_args = args[:additional_args] || BLANK_ARGUMENTS
+      @parallelize = args[:parallelize] || false
     end
 
     def restore
@@ -24,7 +25,9 @@ module Parity
 
     private
 
-    attr_reader :additional_args, :from, :to
+    attr_reader :additional_args, :from, :to, :parallelize
+
+    alias :parallelize? :parallelize
 
     def restore_from_development
       reset_remote_database
@@ -115,10 +118,10 @@ module Parity
     end
 
     def processor_cores
-      if ruby_version_over_2_2?
+      if parallelize? && ruby_version_over_2_2?
         Etc.nprocessors
       else
-        2
+        1
       end
     end
 

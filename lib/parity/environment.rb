@@ -57,6 +57,7 @@ module Parity
         Backup.new(
           from: arguments.first,
           to: environment,
+          parallelize: parallelize?,
           additional_args: additional_restore_arguments,
         ).restore
       end
@@ -72,10 +73,13 @@ module Parity
       arguments.include?("--force")
     end
 
+    def parallelize?
+      arguments.include?("--parallelize")
+    end
+
     def additional_restore_arguments
-      (arguments.drop(1) - ["--force"] + [restore_confirmation_argument]).
-        compact.
-        join(" ")
+      (arguments.drop(1) - ["--force", "--parallelize"] +
+        [restore_confirmation_argument]).compact.join(" ")
     end
 
     def restore_confirmation_argument

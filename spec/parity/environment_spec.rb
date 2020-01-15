@@ -6,6 +6,23 @@ RSpec.describe Parity::Environment do
     allow(Kernel).to receive(:system).and_return(true)
   end
 
+  it "restores in parallel when passed the --parallelize flag" do
+    backup = stub_parity_backup
+    allow(Parity::Backup).to receive(:new).and_return(backup)
+
+    Parity::Environment.new("development",
+                            ["restore", "staging", "--parallelize"]).run
+
+    expect(Parity::Backup).to have_received(:new).
+      with(
+        from: "staging",
+        to: "development",
+        parallelize: true,
+        additional_args: "",
+      )
+    expect(backup).to have_received(:restore)
+  end
+
   it "passes through arguments with correct quoting" do
     Parity::Environment.new(
       "production",
@@ -54,6 +71,7 @@ RSpec.describe Parity::Environment do
       with(
         from: "production",
         to: "staging",
+        parallelize: false,
         additional_args: "--confirm parity-integration-staging",
       )
     expect(backup).to have_received(:restore)
@@ -71,6 +89,7 @@ RSpec.describe Parity::Environment do
       with(
         from: "production",
         to: "staging",
+        parallelize: false,
         additional_args: "--confirm parity-staging",
       )
     expect(backup).to have_received(:restore)
@@ -88,6 +107,7 @@ RSpec.describe Parity::Environment do
       with(
         from: "production",
         to: "staging",
+        parallelize: false,
         additional_args: "--confirm parity-staging",
       )
     expect(backup).to have_received(:restore)
@@ -104,6 +124,7 @@ RSpec.describe Parity::Environment do
       with(
         from: "production",
         to: "staging",
+        parallelize: false,
         additional_args: "--confirm parity-staging",
       )
     expect(backup).to have_received(:restore)
@@ -116,7 +137,12 @@ RSpec.describe Parity::Environment do
     Parity::Environment.new("development", ["restore", "production"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: "production", to: "development", additional_args: "")
+      with(
+        from: "production",
+        to: "development",
+        parallelize: false,
+        additional_args: "",
+      )
     expect(backup).to have_received(:restore)
   end
 
@@ -127,7 +153,12 @@ RSpec.describe Parity::Environment do
     Parity::Environment.new("development", ["restore", "staging"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: "staging", to: "development", additional_args: "")
+      with(
+        from: "staging",
+        to: "development",
+        parallelize: false,
+        additional_args: "",
+      )
     expect(backup).to have_received(:restore)
   end
 
@@ -152,7 +183,12 @@ RSpec.describe Parity::Environment do
     Parity::Environment.new("production", ["restore", "staging", "--force"]).run
 
     expect(Parity::Backup).to have_received(:new).
-      with(from: "staging", to: "production", additional_args: "")
+      with(
+        from: "staging",
+        to: "production",
+        parallelize: false,
+        additional_args: "",
+      )
     expect(backup).to have_received(:restore)
   end
 
