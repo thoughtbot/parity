@@ -104,6 +104,12 @@ with `heroku ______ --remote staging` or `heroku ______ --remote production`:
     watch production ps
     staging open
 
+You can optionally parallelize a DB restore by passing `--parallelize`
+as a flag to the `development` or `production` commands:
+```
+    development restore-from production --parallelize
+```
+
 [2]: http://redis.io/commands
 
 Convention

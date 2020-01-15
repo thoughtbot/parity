@@ -7,7 +7,11 @@ describe Parity::Backup do
       allow(Kernel).to receive(:system)
       allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
 
-      Parity::Backup.new(from: "production", to: "development").restore
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+        parallelize: true,
+      ).restore
 
       expect(Kernel).
         to have_received(:system).
@@ -31,7 +35,11 @@ describe Parity::Backup do
       allow(Kernel).to receive(:system)
       allow(Etc).to receive(:respond_to?).with(:nprocessors).and_return(false)
 
-      Parity::Backup.new(from: "production", to: "development").restore
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+        parallelize: false,
+      ).restore
 
       expect(Kernel).
         to have_received(:system).
@@ -44,7 +52,64 @@ describe Parity::Backup do
         with(drop_development_database_drop_command)
       expect(Kernel).
         to have_received(:system).
-        with(restore_from_local_temp_backup_command(cores: 2))
+        with(restore_from_local_temp_backup_command(cores: 1))
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
+
+    it "restores backups in parallel when the right flag is set" do
+      allow(IO).to receive(:read).and_return(database_fixture)
+      allow(Kernel).to receive(:system)
+      allow(Etc).to receive(:nprocessors).and_return(12)
+
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+        parallelize: true,
+      ).restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command(cores: 12))
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
+
+    it "does not restore backups in parallel when the right flag is set" +
+      "but the ruby version is under 2.2" do
+      allow(IO).to receive(:read).and_return(database_fixture)
+      allow(Kernel).to receive(:system)
+      allow(Etc).to receive(:respond_to?).with(:nprocessors).and_return(false)
+
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+        parallelize: true,
+      ).restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command(cores: 1))
       expect(Kernel).
         to have_received(:system).
         with(delete_local_temp_backup_command)
@@ -55,7 +120,11 @@ describe Parity::Backup do
       allow(Kernel).to receive(:system)
       allow(Etc).to receive(:nprocessors).and_return(number_of_processes)
 
-      Parity::Backup.new(from: "production", to: "development").restore
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+        parallelize: true,
+      ).restore
 
       expect(Kernel).
         to have_received(:system).
