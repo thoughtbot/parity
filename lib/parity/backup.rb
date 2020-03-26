@@ -6,6 +6,7 @@ module Parity
     DATABASE_YML_RELATIVE_PATH = "config/database.yml".freeze
     DEVELOPMENT_ENVIRONMENT_KEY_NAME = "development".freeze
     DATABASE_KEY_NAME = "database".freeze
+    DATABASE_URL_KEY_NAME = "url".freeze
 
     def initialize(args)
       @from, @to = args.values_at(:from, :to)
@@ -108,9 +109,14 @@ module Parity
     end
 
     def development_db
-      YAML.load(database_yaml_file).
-        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME).
-        fetch(DATABASE_KEY_NAME)
+      environment_block = YAML.load(database_yaml_file).
+        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME)
+      if environment_block.key?(DATABASE_KEY_NAME)
+        environment_block.fetch(DATABASE_KEY_NAME)
+      elsif environment_block.key?(DATABASE_URL_KEY_NAME)
+        url = environment_block.fetch(DATABASE_URL_KEY_NAME)
+        URI(url).path.tr('/', '')
+      end
     end
 
     def database_yaml_file
