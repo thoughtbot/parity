@@ -109,13 +109,13 @@ module Parity
     end
 
     def development_db
-      environment_block = YAML.load(database_yaml_file).
+      environment_block = YAML.safe_load(database_yaml_file).
         fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME)
       if environment_block.key?(DATABASE_KEY_NAME)
         environment_block.fetch(DATABASE_KEY_NAME)
       elsif environment_block.key?(DATABASE_URL_KEY_NAME)
         url = environment_block.fetch(DATABASE_URL_KEY_NAME)
-        URI(url).path.tr('/', '')
+        URI(url).path.tr("/", "")
       end
     end
 
