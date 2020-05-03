@@ -42,7 +42,6 @@ module Parity
       download_remote_backup
       wipe_development_database
       restore_from_local_temp_backup
-      delete_local_temp_backup
       delete_rails_production_environment_settings
     end
 
@@ -79,10 +78,6 @@ module Parity
           "--dbname #{development_db} --jobs=#{processor_cores} "\
           "#{additional_args}",
       )
-    end
-
-    def delete_local_temp_backup
-      Kernel.system("rm tmp/latest.backup")
     end
 
     def delete_rails_production_environment_settings

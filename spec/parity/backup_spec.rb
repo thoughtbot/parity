@@ -25,9 +25,6 @@ describe Parity::Backup do
       expect(Kernel).
         to have_received(:system).
         with(restore_from_local_temp_backup_command)
-      expect(Kernel).
-        to have_received(:system).
-        with(delete_local_temp_backup_command)
     end
 
     it "restores backups to development with Rubies that do not support Etc.nprocessors" do
@@ -53,9 +50,6 @@ describe Parity::Backup do
       expect(Kernel).
         to have_received(:system).
         with(restore_from_local_temp_backup_command(cores: 1))
-      expect(Kernel).
-        to have_received(:system).
-        with(delete_local_temp_backup_command)
     end
 
     it "restores backups in parallel when the right flag is set" do
@@ -81,9 +75,6 @@ describe Parity::Backup do
       expect(Kernel).
         to have_received(:system).
         with(restore_from_local_temp_backup_command(cores: 12))
-      expect(Kernel).
-        to have_received(:system).
-        with(delete_local_temp_backup_command)
     end
 
     it "does not restore backups in parallel when the right flag is set" +
@@ -110,9 +101,6 @@ describe Parity::Backup do
       expect(Kernel).
         to have_received(:system).
         with(restore_from_local_temp_backup_command(cores: 1))
-      expect(Kernel).
-        to have_received(:system).
-        with(delete_local_temp_backup_command)
     end
 
     it "drops the 'ar_internal_metadata' table if it exists" do
@@ -138,9 +126,6 @@ describe Parity::Backup do
       expect(Kernel).
         to have_received(:system).
         with(restore_from_local_temp_backup_command)
-      expect(Kernel).
-        to have_received(:system).
-        with(delete_local_temp_backup_command)
       expect(Kernel).to have_received(:system).with(set_db_metadata_sql)
     end
   end
@@ -224,10 +209,6 @@ describe Parity::Backup do
 
   def number_of_processes
     2
-  end
-
-  def delete_local_temp_backup_command
-    "rm tmp/latest.backup"
   end
 
   def heroku_development_to_staging_passthrough(db_name: default_db_name)
