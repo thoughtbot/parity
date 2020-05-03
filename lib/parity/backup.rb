@@ -75,7 +75,7 @@ module Parity
 
     def restore_from_local_temp_backup
       Kernel.system(
-        "pg_restore tmp/latest.backup --verbose --clean --no-acl --no-owner "\
+        "pg_restore tmp/latest.backup --verbose --no-acl --no-owner "\
           "--dbname #{development_db} --jobs=#{processor_cores} "\
           "#{additional_args}",
       )
