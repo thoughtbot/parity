@@ -169,6 +169,32 @@ describe Parity::Backup do
         to have_received(:system).
         with(delete_local_temp_backup_command)
     end
+
+    it "is able to load a database.yml file with 3-tier configuration" do
+      allow(IO).to receive(:read).and_return(database_fixture_three_tier)
+      allow(Kernel).to receive(:system)
+
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+      ).restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command(cores: 1))
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
   end
 
   it "restores backups to staging from production" do
@@ -229,6 +255,10 @@ describe Parity::Backup do
 
   def database_fixture_with_erb
     IO.read(fixture_path("database_with_erb.yml"))
+  end
+
+  def database_fixture_three_tier
+    IO.read(fixture_path("database_three_tier.yml"))
   end
 
   def fixture_path(filename)

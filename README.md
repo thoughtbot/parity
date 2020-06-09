@@ -103,7 +103,7 @@ heroku git:remote -r staging -a your-staging-app
 heroku git:remote -r production -a your-production-app
 ```
 * There is a `config/database.yml` file that can be parsed as YAML for
-  `['development']['database']`.
+  `['development']['database']` or, alternatively, `['development']['primary']['database']` for multi-database configurations.
 
 Pipelines
 ---------
