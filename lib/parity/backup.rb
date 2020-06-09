@@ -5,6 +5,7 @@ module Parity
     BLANK_ARGUMENTS = "".freeze
     DATABASE_YML_RELATIVE_PATH = "config/database.yml".freeze
     DEVELOPMENT_ENVIRONMENT_KEY_NAME = "development".freeze
+    PRIMARY_DATABASE_KEY_NAME = "primary".freeze
     DATABASE_KEY_NAME = "database".freeze
 
     def initialize(args)
@@ -108,9 +109,15 @@ module Parity
     end
 
     def development_db
-      YAML.load(database_yaml_file).
-        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME).
-        fetch(DATABASE_KEY_NAME)
+      db_configuration = YAML.safe_load(database_yaml_file, aliases: true).
+        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME)
+
+      if db_configuration.key?(PRIMARY_DATABASE_KEY_NAME)
+        db_configuration[PRIMARY_DATABASE_KEY_NAME].
+          fetch(DATABASE_KEY_NAME)
+      else
+        db_configuration.fetch(DATABASE_KEY_NAME)
+      end
     end
 
     def database_yaml_file

@@ -1,0 +1,8 @@
+development:
+  primary:
+    database: parity_development
+    username: user
+  primary_replica:
+    database: parity_development
+    username: user_readonly
+    replica: true
