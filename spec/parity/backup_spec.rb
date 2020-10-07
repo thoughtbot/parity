@@ -143,6 +143,32 @@ describe Parity::Backup do
         with(delete_local_temp_backup_command)
       expect(Kernel).to have_received(:system).with(set_db_metadata_sql)
     end
+
+    it "is able to load a database.yml file containing top-level ERB" do
+      allow(IO).to receive(:read).and_return(database_fixture_with_erb)
+      allow(Kernel).to receive(:system)
+
+      Parity::Backup.new(
+        from: "production",
+        to: "development",
+      ).restore
+
+      expect(Kernel).
+        to have_received(:system).
+        with(make_temp_directory_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(download_remote_database_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(drop_development_database_drop_command)
+      expect(Kernel).
+        to have_received(:system).
+        with(restore_from_local_temp_backup_command(cores: 1))
+      expect(Kernel).
+        to have_received(:system).
+        with(delete_local_temp_backup_command)
+    end
   end
 
   it "restores backups to staging from production" do
@@ -199,6 +225,10 @@ describe Parity::Backup do
 
   def database_fixture
     IO.read(fixture_path("database.yml"))
+  end
+
+  def database_fixture_with_erb
+    IO.read(fixture_path("database_with_erb.yml"))
   end
 
   def fixture_path(filename)

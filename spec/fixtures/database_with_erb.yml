@@ -1,6 +1,8 @@
 default: &default
   reconnect: true
 
+<% if true %>
 development: &development
   <<: *default
-  database: <%= ENV["DEVELOPMENT_DATABASE_NAME"] %>
+  database: <%= ['parity', 'development'].join('_') %>
+<% end %>

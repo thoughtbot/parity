@@ -114,7 +114,7 @@ module Parity
     end
 
     def database_yaml_file
-      IO.read(DATABASE_YML_RELATIVE_PATH)
+      ERB.new(IO.read(DATABASE_YML_RELATIVE_PATH)).result
     end
 
     def processor_cores
