@@ -10,8 +10,10 @@ RSpec.describe Parity::Environment do
     backup = stub_parity_backup
     allow(Parity::Backup).to receive(:new).and_return(backup)
 
-    Parity::Environment.new("development",
-                            ["restore", "staging", "--parallelize"]).run
+    Parity::Environment.new(
+      "development",
+      ["restore", "staging", "--parallelize"],
+    ).run
 
     expect(Parity::Backup).to have_received(:new).
       with(
@@ -238,7 +240,7 @@ RSpec.describe Parity::Environment do
       once
   end
 
-  it "returns true if the deploy was succesful but no migrations needed to be run" do
+  it "returns true if deploy was successful without migrations" do
     result = Parity::Environment.new("production", ["deploy"]).run
 
     expect(result).to eq(true)
@@ -258,6 +260,26 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:system).with(git_push_feature_branch)
   end
 
+  it "deploys feature branches to staging's main for evaluation" do
+    env = Parity::Environment.new("staging", ["deploy"])
+
+    allow(env).to receive(:branch_ref).and_return("main")
+
+    env.run
+
+    expect(Kernel).to have_received(:system).with(git_push_feature_branch_main)
+  end
+
+  it "deploys main production's main for evaluation" do
+    env = Parity::Environment.new("production", ["deploy"])
+
+    allow(env).to receive(:branch_ref).and_return("main")
+
+    env.run
+
+    expect(Kernel).to have_received(:system).with(git_push_main)
+  end
+
   def heroku_backup
     "heroku pg:backups:capture --remote production"
   end
@@ -274,8 +296,16 @@ RSpec.describe Parity::Environment do
     "git push production master"
   end
 
+  def git_push_main
+    "git push production main"
+  end
+
   def git_push_feature_branch
     "git push staging HEAD:master --force"
+  end
+
+  def git_push_feature_branch_main
+    "git push staging HEAD:main --force"
   end
 
   def migrate
