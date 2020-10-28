@@ -41,11 +41,24 @@ module Parity
 
     def deploy
       if production?
-        Kernel.system("git push production master")
+        Kernel.system("git push production #{branch_ref}")
       else
         Kernel.system(
-          "git push #{environment} HEAD:master --force",
+          "git push #{environment} HEAD:#{branch_ref} --force",
         )
+      end
+    end
+
+    def branch_ref
+      main_ref_exists = system("git show-ref --verify --quiet refs/heads/main")
+      master_ref_exists = system(
+        "git show-ref --verify --quiet refs/heads/master",
+      )
+
+      if main_ref_exists && !master_ref_exists
+        "main"
+      else
+        "master"
       end
     end
 
