@@ -9,7 +9,7 @@ if ARGV.empty?
 else
   review_app_number = ARGV.first
   staging_git_remote = Open3.capture3("git remote get-url staging")[0].strip
-  review_app_prefix = staging_git_remote.split("/").last.gsub(/\.git\Z/, "")[0, 22]
+  review_app_prefix = staging_git_remote.split("/").last.gsub(/\.git\Z/, "")[0, 20]
 
   exit Parity::Environment.new(
     "#{review_app_prefix}-pr-#{review_app_number}",
