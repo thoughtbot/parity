@@ -8,22 +8,11 @@ Shell commands for development, staging, and production parity for Heroku apps.
 Install
 -------
 
-On macOS, this installs everything you need:
+    gem install parity
 
-    brew tap thoughtbot/formulae
-    brew install parity
+Or bundle it in your project:
 
-On Debian:
-
-    wget -qO - https://apt.thoughtbot.com/thoughtbot.gpg.key | sudo apt-key add -
-    echo "deb http://apt.thoughtbot.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/thoughtbot.list
-    sudo apt-get update
-    sudo apt-get install parity
-
-On other systems you can:
-
-1. Download the package for your system from the [releases page][releases]
-1. Extract the tarball and place it so that `/bin` is in your `PATH`
+    gem "parity"
 
 [releases]: https://github.com/thoughtbot/parity/releases
 
@@ -32,10 +21,6 @@ Parity requires these command-line programs:
     git
     heroku
     pg_restore
-
-On macOS, these programs are installed
-as Homebrew package dependencies of
-the `parity` Homebrew package.
 
 Usage
 -----
