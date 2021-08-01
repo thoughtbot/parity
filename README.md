@@ -77,12 +77,6 @@ Tail a log:
     staging tail
     pr_app 1234 tail
 
-Use [redis-cli][2] with your `REDIS_URL` add-on:
-
-    production redis-cli
-    staging redis-cli
-    pr_app 1234 redis-cli
-
 The scripts also pass through, so you can do anything with them that you can do
 with `heroku ______ --remote staging` or `heroku ______ --remote production`:
 

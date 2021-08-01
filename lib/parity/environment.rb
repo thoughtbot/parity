@@ -126,16 +126,6 @@ module Parity
       )
     end
 
-    def redis_cli
-      Kernel.system("redis-cli", "-u", raw_redis_url)
-    end
-
-    def raw_redis_url
-      @redis_to_go_url ||= Open3.
-        capture3(command_for_remote("config:get REDIS_URL"))[0].
-        strip
-    end
-
     def heroku_app_name
       HerokuAppName.new(environment).to_s
     end
