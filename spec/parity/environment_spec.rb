@@ -224,22 +224,6 @@ RSpec.describe Parity::Environment do
     expect(Kernel).to have_received(:exec).with(*open)
   end
 
-  it "opens a Redis session connected to the environment's Redis service" do
-    allow(Open3).to receive(:capture3).and_return(open3_redis_url_fetch_result)
-
-    Parity::Environment.new("production", ["redis_cli"]).run
-
-    expect(Kernel).to have_received(:system).with(
-      "redis-cli",
-      "-u",
-      open3_redis_url_fetch_result[0].strip,
-    )
-    expect(Open3).
-      to have_received(:capture3).
-      with(fetch_redis_url("REDIS_URL")).
-      once
-  end
-
   it "returns true if deploy was successful without migrations" do
     result = Parity::Environment.new("production", ["deploy"]).run
 
@@ -325,18 +309,6 @@ RSpec.describe Parity::Environment do
 
   def open
     ["heroku", "open", "--remote", "production"]
-  end
-
-  def fetch_redis_url(env_variable)
-    "heroku config:get #{env_variable} --remote production"
-  end
-
-  def open3_redis_url_fetch_result
-    [
-      "redis://redistogo:abcd1234efgh5678@landshark.redistogo.com:90210/\n",
-      "",
-      ""
-    ]
   end
 
   def psql_count
