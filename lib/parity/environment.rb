@@ -2,11 +2,17 @@ require "parity/backup"
 
 module Parity
   class Environment
-    def initialize(environment, subcommands, app_argument: "--remote")
+    def initialize(
+      environment,
+      subcommands,
+      app_argument: "--remote",
+      psql_argument: ""
+    )
       self.environment = environment
       self.subcommand = subcommands[0]
       self.arguments = subcommands[1..-1]
       self.app_argument = app_argument
+      self.psql_argument = psql_argument
     end
 
     def run
@@ -18,6 +24,7 @@ module Parity
     PROTECTED_ENVIRONMENTS = %w(development production)
 
     attr_accessor :app_argument, :environment, :subcommand, :arguments
+    attr_accessor :psql_argument
 
     def run_command
       if self.class.private_method_defined?(methodized_subcommand)
@@ -72,6 +79,7 @@ module Parity
           to: environment,
           parallelize: parallelize?,
           additional_args: additional_restore_arguments,
+          psql_args: psql_argument,
         ).restore
       end
     end
