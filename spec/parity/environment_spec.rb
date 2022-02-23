@@ -233,13 +233,21 @@ RSpec.describe Parity::Environment do
   it "returns false if the deploy was not succesful" do
     allow(Kernel).to receive(:system).with(git_push).and_return(false)
 
-    result = Parity::Environment.new("production", ["deploy"]).run
+    env = Parity::Environment.new("production", ["deploy"])
+
+    allow(env).to receive(:branch_ref).and_return("master")
+
+    result = env.run
 
     expect(result).to eq(false)
   end
 
   it "deploys feature branches to staging's master for evaluation" do
-    Parity::Environment.new("staging", ["deploy"]).run
+    env = Parity::Environment.new("staging", ["deploy"])
+
+    allow(env).to receive(:branch_ref).and_return("master")
+
+    env.run
 
     expect(Kernel).to have_received(:system).with(git_push_feature_branch)
   end
