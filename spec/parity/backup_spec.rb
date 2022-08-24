@@ -24,6 +24,9 @@ describe Parity::Backup do
         with(drop_development_database_drop_command)
       expect(Kernel).
         to have_received(:system).
+        with(create_heroku_ext_schema_command)
+      expect(Kernel).
+        to have_received(:system).
         with(restore_from_local_temp_backup_command)
       expect(Kernel).
         to have_received(:system).
@@ -237,6 +240,14 @@ describe Parity::Backup do
 
   def drop_development_database_drop_command(db_name: default_db_name)
     "dropdb --if-exists #{db_name} && createdb #{db_name}"
+  end
+
+  def create_heroku_ext_schema_command(db_name: default_db_name)
+    <<~SHELL
+      psql #{db_name} -c "
+        CREATE SCHEMA IF NOT EXISTS heroku_ext;
+      "
+    SHELL
   end
 
   def make_temp_directory_command
