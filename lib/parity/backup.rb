@@ -41,6 +41,7 @@ module Parity
       ensure_temp_directory_exists
       download_remote_backup
       wipe_development_database
+      create_heroku_ext_schema
       restore_from_local_temp_backup
       delete_local_temp_backup
       delete_rails_production_environment_settings
@@ -50,6 +51,14 @@ module Parity
       Kernel.system(
         "dropdb --if-exists #{development_db} && createdb #{development_db}",
       )
+    end
+
+    def create_heroku_ext_schema
+      Kernel.system(<<~SHELL)
+        psql #{development_db} -c "
+          CREATE SCHEMA IF NOT EXISTS heroku_ext;
+        "
+      SHELL
     end
 
     def reset_remote_database
