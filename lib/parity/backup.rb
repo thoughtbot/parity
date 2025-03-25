@@ -117,9 +117,9 @@ module Parity
     end
 
     def development_db
-      YAML.safe_load(database_yaml_file, aliases: true).
-        fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME).
-        fetch(DATABASE_KEY_NAME)
+      config = YAML.safe_load(database_yaml_file, aliases: true).fetch(DEVELOPMENT_ENVIRONMENT_KEY_NAME)
+      config = config["primary"] if config.key?("primary")
+      config.fetch(DATABASE_KEY_NAME)
     end
 
     def database_yaml_file
